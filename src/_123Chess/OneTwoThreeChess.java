@@ -226,10 +226,10 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
                 
                 if(state == GameData.ANIMATING && i==move.source_location) continue;
                 if (position.board[i] > 0) {          
-                    int piece = position.human_pieces[position.board[i]].value;
+                    int piece = position.player1_pieces[position.board[i]].value;
                     g.drawImage(images.get(piece),x*45,y*45,this);
                 }else{
-                    int piece = position.computer_pieces[-position.board[i]].value;
+                    int piece = position.player2_pieces[-position.board[i]].value;
                     g.drawImage(images.get(-piece),x*45,y*45,this);
                 }               
             }  
@@ -240,7 +240,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            if(state != GameData.HUMAN_MOVE) return;
+            if(state != GameData.PLAYER1_MOVE) return;
             int location = boardValue(e.getY())*10+boardValue(e.getX());              
             if(position.board[location] == GameData.ILLEGAL) return;
             if((!piece_selected || position.board[location]>0) && position.board[location] != GameData.EMPTY){
@@ -248,7 +248,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
                     piece_selected = true;
                     move.source_location = location;
                 }
-            }else if(piece_selected && validMove(location)){
+            }else if(piece_selected){
                 piece_selected = false;
                 move.destination = location;     
                 state = GameData.PREPARE_ANIMATION;
@@ -273,63 +273,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
         return value/45;
     }
     
-    public boolean validMove(int destination){        
-        int source = move.source_location;
-        int destination_square = position.board[destination];
-        if(destination_square == GameData.ILLEGAL) return false;
-        if(!game.safeMove(GameData.HUMAN,source,destination)) return false;
-        boolean valid = false;
-        int piece_value = position.human_pieces[position.board[source]].value;                        
-        switch(piece_value){
-            case Piece.PAWN:
-                if(destination == source-10 && destination_square == GameData.EMPTY) valid = true;
-                if(destination == source-20 && position.board[source-10] == GameData.EMPTY &&
-                        destination_square == GameData.EMPTY && source>80) valid = true;
-                if(destination == source-9 && destination_square<0) valid = true;
-                if(destination == source-11 && destination_square<0) valid = true;
-                break;
-            case Piece.KNIGHT:
-            case Piece.KING:
-                //if(piece_value == Piece.KING) valid = checkCastling(destination);
-                int[] destinations = null;
-                if(piece_value == Piece.KNIGHT) destinations = new int[]{source-21,source+21,source+19,source-19,                    
-                    source-12,source+12,source-8,source+8};
-                else destinations = new int[]{source+1,source-1,source+10,source-10,
-                    source+11,source-11,source+9,source-9};
-                for(int i=0; i<destinations.length; i++){
-                    if(destinations[i] == destination){
-                        if(destination_square == GameData.EMPTY || destination_square<0){
-                            valid = true;
-                            break;
-                        }
-                    }
-                }                
-                break;
-            case Piece.BISHOP:
-            case Piece.ROOK:
-            case Piece.QUEEN:
-                int[] deltas = null;
-                if(piece_value == Piece.BISHOP) deltas = new int[]{11,-11,9,-9};
-                if(piece_value == Piece.ROOK) deltas = new int[]{1,-1,10,-10};
-                if(piece_value == Piece.QUEEN) deltas = new int[]{1,-1,10,-10,11,-11,9,-9};
-                for (int i = 0; i < deltas.length; i++) {
-                    int des = source + deltas[i]; 
-                    valid = true;
-                    while (destination != des) { 
-                        destination_square = position.board[des];  
-                        if(destination_square != GameData.EMPTY){
-                            valid = false;
-                            break;
-                        }                        
-                        des += deltas[i];
-                    }
-                    if(valid) break;
-                }
-                break;
-        }        
-        return valid;
-    }
-
+    
     public void loadPieceImages()
     {
       char[] resource_keys = { 'p', 'n', 'b', 'r', 'q', 'k' };
@@ -349,14 +293,9 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
         ex.printStackTrace();
       }
     }
+
     public void newGame()
     {
-//      if (!this.east_pane.isVisible())
-//      {
-//        this.east_pane.setVisible(true);
-//        pack();
-//        setLocationRelativeTo(null);
-//      }
       this.is_white = true;//this.play_options.white_button.isSelected();
       this.move.source_location = -1;
       this.move.destination = -1;
@@ -364,7 +303,6 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
       this.position.initialize(this.is_white);
       this.game = new Game(this.position);
       loadPieceImages();
-      //this.promotion_pane.setIcons(this.is_white);
       this.board_pane.repaint();
       if (this.is_white) {
         this.state = 1005;
@@ -374,8 +312,5 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
       this.castling = false;
       this.history_positions.clear();
       this.history_count = 0;
-      //newHistoryPosition();
-      //this.move_searcher.level = this.play_options.levelSlider.getValue();
-      //play();
     }
 }
