@@ -45,7 +45,6 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 
 	 	Position position;        
 	    ChessBoardPane board_pane;  
-	    //HistoryBoardPane history_pane;
 	    JPanel east_pane;
 	    Resource resource = new Resource();
 	    Map<Integer,Image> images = new HashMap<Integer,Image>();
@@ -54,13 +53,10 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	    boolean piece_selected;
 	    boolean is_white;
 	    int state;
-	    //MoveSearcher move_searcher;
 	    Game game;    
 	    JLabel new_game,quit,about,history,first,prev,next,last;    
 	    JPanel main_pane = new JPanel(new BorderLayout());
-	    //PreferencesPane play_options;
 	    boolean castling;
-	    //PromotionPane promotion_pane;
 	    List<Position> history_positions = new ArrayList<Position>();
 	    int history_count;
 	    Color bg_color = Color.decode("#e3edd5");	
@@ -209,16 +205,8 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
                 int x = i%10;
                 int y = (i-x)/10;
                 
-                if (piece_selected && i == move.source_location) {                
-                    g.drawImage(images.get(GameData.GLOW), x * 45, y * 45,this);                    
-                }else if(!piece_selected && move.destination == i && 
-                        (position.board[i]==GameData.EMPTY || position.board[i]<0)){
-                    g.drawImage(images.get(GameData.GLOW2), x * 45, y * 45, this);                                        
-                }
-                
                 if (position.board[i] == GameData.EMPTY) continue;
                 
-                if(state == GameData.ANIMATING && i==move.source_location) continue;
                 if (position.board[i] > 0) {          
                     int piece = position.player1_pieces[position.board[i]].value;
                     g.drawImage(images.get(piece),x*45,y*45,this);
@@ -227,9 +215,6 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
                     g.drawImage(images.get(-piece),x*45,y*45,this);
                 }               
             }  
-            if(state == GameData.ANIMATING){
-                g.drawImage(animating_image,movingX,movingY,this);
-            }
         }
 
         @Override
