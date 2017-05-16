@@ -23,23 +23,5 @@ public class GameData {
     public final static int GAME_ENDED = 1007;
     public final static int DRAW = 0;
     public final static int CHECKMATE = 1;
-    public final static int NEW_BUTTON = 10078;
-    public final static int NEW_BUTTON2 = 10079;
-    public final static int QUIT_BUTTON = 10080;
-    public final static int QUIT_BUTTON2 = 10081;
-    public final static int ABOUT_BUTTON = 10082;
-    public final static int ABOUT_BUTTON2 = 10083;
-    public final static int HISTORY_BUTTON = 10084;
-    public final static int HISTORY_BUTTON2 = 10085;    
-    public final static int FIRST_BUTTON = 10086;
-    public final static int FIRST_BUTTON2 = 10087;
-    public final static int LAST_BUTTON = 10088;
-    public final static int LAST_BUTTON2 = 10089;
-    public final static int PREV_BUTTON = 10090;
-    public final static int PREV_BUTTON2 = 10091;
-    public final static int NEXT_BUTTON = 10092;
-    public final static int NEXT_BUTTON2 = 10093; 
     public final static int PROMOTING = 10086;    
-    public final static int BOARD_IMAGE2 = 10087;
-    public final static int HISTORY_TITLE = 10094;
 }

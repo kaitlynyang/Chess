@@ -63,7 +63,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	    //PromotionPane promotion_pane;
 	    List<Position> history_positions = new ArrayList<Position>();
 	    int history_count;
-	    Color bg_color = Color.decode("#efd39c");	
+	    Color bg_color = Color.decode("#e3edd5");	
 	 
 	    
 	    /**
@@ -138,13 +138,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	    
 	    public void loadBoardImages(){
 	        try{ 
-	        	//images.put(GameData.BOARD_IMAGE,ImageIO.read(new File("src/res/images/chessboard.png")));
 	            images.put(GameData.BOARD_IMAGE,ImageIO.read(new File(resource.getResourceString("chessboard"))));
-	            //images.put(GameData.BOARD_IMAGE2,ImageIO.read(resource.getResource("history_board")));
-	            //images.put(GameData.GLOW,ImageIO.read(resource.getResource("glow")));
-	            //images.put(GameData.GLOW2,ImageIO.read(resource.getResource("glow2")));            
-	            //images.put(GameData.HISTORY_TITLE,ImageIO.read(resource.getResource("history_title")));
-	            //images.put(GameData.MYCHESSMATE,ImageIO.read(resource.getResource("mychessmate")));
 	        }catch(IOException ex){
 	            ex.printStackTrace();
 	        }        
