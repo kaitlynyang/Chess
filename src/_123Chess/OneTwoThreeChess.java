@@ -199,7 +199,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
             super.paintComponent(g);  
             //g.drawImage(images.get(GameData.MYCHESSMATE),20,36,this);
             Image scaledImage = images.get(GameData.BOARD_IMAGE).getScaledInstance(board_pane.getWidth()-20,board_pane.getHeight()-65,Image.SCALE_SMOOTH);
-            g.drawImage(scaledImage,15,60,this);       
+            g.drawImage(scaledImage,10,55,this);       
             for (int i = 0; i < position.board.length-11; i++) {
                 if (position.board[i] == GameData.ILLEGAL) continue;                                                                
                 int x = i%10;
