@@ -32,12 +32,4 @@ public class Resource {
         }
         return str;
     }
-    public URL getResource(String key){
-        String name = getResourceString(key);
-        if(name != null){
-            URL url = this.getClass().getResource(name);
-            return url;
-        }
-        return null;
-    }
 }
