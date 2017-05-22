@@ -8,21 +8,21 @@ package _123Chess;
  *
  * @author kaitlyn.yang
  */
-public class Position {
+public class BoardDB {
     Move last_move;
     public int[] board = new int[120];
     public Piece[] player1_pieces = new Piece[17];
     public Piece[] player2_pieces = new Piece[17];
     
-    public Position(){
+    public BoardDB(){
         for(int i=0; i<board.length; i++){
             board[i] = Constants.EMPTY;
         }
     }
-    public Position(Position position){
+    public BoardDB(BoardDB position){
         this(position,null);
     }
-    public Position(Position position, Move last_move){
+    public BoardDB(BoardDB position, Move last_move){
         System.arraycopy(position.board, 0, this.board, 0, board.length);
         for(int i=1; i<player1_pieces.length; i++){
             if(position.player1_pieces[i] != null){

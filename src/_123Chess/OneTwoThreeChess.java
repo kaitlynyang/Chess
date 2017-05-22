@@ -33,7 +33,7 @@ import _123Chess.Game;
 import _123Chess.Constants;
 import _123Chess.Move;
 import _123Chess.Piece;
-import _123Chess.Position;
+import _123Chess.BoardDB;
 import _123Chess.Resource;
 import _123Chess.Constants;
 
@@ -43,7 +43,7 @@ import _123Chess.Constants;
  */
 public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListener {
 
-	 	Position position;        
+	 	BoardDB position;        
 	    ChessBoardPane board_pane;  
 	    Resource resource = new Resource();
 	    Map<Integer,Image> images = new HashMap<Integer,Image>();
@@ -103,7 +103,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	    public OneTwoThreeChess(){
 	        //super("MyChessmate "+Constants.VERSION);                                  
 	        setContentPane(main_pane);                
-	        position = new Position();
+	        position = new BoardDB();
 	        //promotion_pane = new PromotionPane(this);
 	        
 	        //loadMenuIcons();
@@ -218,8 +218,9 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
         public void mouseClicked(MouseEvent e) {
             int location = boardValue(e.getY())*10+boardValue(e.getX());              
             if(position.board[location] == Constants.ILLEGAL) return;
-            if((!piece_selected || (activePlayer == Constants.PLAYER1_MOVE && position.board[location]>0) 
-            		|| (activePlayer == Constants.PLAYER2_MOVE && position.board[location]<0)) && position.board[location] != Constants.EMPTY){
+            if(!piece_selected && 
+            		((activePlayer == Constants.PLAYER1_MOVE && position.board[location]>0) || (activePlayer == Constants.PLAYER2_MOVE && position.board[location]<0)) 
+            		&& position.board[location] != Constants.EMPTY) {
 //                if(position.board[location]>0){
                     piece_selected = true;
                     move.source_location = location;
@@ -273,7 +274,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
       this.is_white = true;//this.play_options.white_button.isSelected();
       this.move.source_location = -1;
       this.move.destination = -1;
-      this.position = new Position();
+      this.position = new BoardDB();
       this.position.initialize(this.is_white);
       this.game = new Game(this.position);
       loadPieceImages();
