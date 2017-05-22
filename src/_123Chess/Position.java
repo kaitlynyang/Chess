@@ -16,7 +16,7 @@ public class Position {
     
     public Position(){
         for(int i=0; i<board.length; i++){
-            board[i] = GameConstants.EMPTY;
+            board[i] = Constants.EMPTY;
         }
     }
     public Position(Position position){
@@ -60,18 +60,18 @@ public class Position {
             j++;
         }                      
         board = new int[]{
-            GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,
-            GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,
-            GameConstants.ILLEGAL,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.ILLEGAL,
-            GameConstants.ILLEGAL,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.ILLEGAL,
-            GameConstants.ILLEGAL,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.ILLEGAL,
-            GameConstants.ILLEGAL,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.ILLEGAL,
-            GameConstants.ILLEGAL,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.ILLEGAL,
-            GameConstants.ILLEGAL,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.ILLEGAL,
-            GameConstants.ILLEGAL,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.ILLEGAL,
-            GameConstants.ILLEGAL,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.EMPTY,GameConstants.ILLEGAL,
-            GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,
-            GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL,GameConstants.ILLEGAL
+            Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,
+            Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,
+            Constants.ILLEGAL,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.ILLEGAL,
+            Constants.ILLEGAL,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.ILLEGAL,
+            Constants.ILLEGAL,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.ILLEGAL,
+            Constants.ILLEGAL,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.ILLEGAL,
+            Constants.ILLEGAL,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.ILLEGAL,
+            Constants.ILLEGAL,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.ILLEGAL,
+            Constants.ILLEGAL,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.ILLEGAL,
+            Constants.ILLEGAL,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.ILLEGAL,
+            Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,
+            Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL
         };        
         for(int i=0; i<board.length; i++){                        
             for(int k=1; k<player1_pieces.length; k++){
@@ -96,11 +96,11 @@ public class Position {
         }else{
             player2_pieces[-source_index].has_moved = true;
             player2_pieces[-source_index].location = move.destination;
-            if(destination_index>0 && destination_index != GameConstants.EMPTY){                
+            if(destination_index>0 && destination_index != Constants.EMPTY){                
                 player1_pieces[destination_index] = null;
             }            
         }
-        board[move.source_location] = GameConstants.EMPTY;
+        board[move.source_location] = Constants.EMPTY;
         board[move.destination] = source_index;
     }
 }

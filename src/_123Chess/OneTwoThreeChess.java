@@ -30,12 +30,12 @@ import javax.swing.UIManager;
 
 //import JFrame;
 import _123Chess.Game;
-import _123Chess.GameConstants;
+import _123Chess.Constants;
 import _123Chess.Move;
-//import _123Chess.MoveSearcher;
 import _123Chess.Piece;
 import _123Chess.Position;
 import _123Chess.Resource;
+import _123Chess.Constants;
 
 /**
  * @author kaitlyn.yang
@@ -52,6 +52,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	    boolean piece_selected;
 	    boolean is_white;
 	    int state;
+	    int activePlayer = Constants.PLAYER1_MOVE;
 	    Game game;    
 	    JPanel main_pane = new JPanel(new BorderLayout());
 	    boolean castling;
@@ -100,7 +101,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	    }	
 	    
 	    public OneTwoThreeChess(){
-	        //super("MyChessmate "+GameConstants.VERSION);                                  
+	        //super("MyChessmate "+Constants.VERSION);                                  
 	        setContentPane(main_pane);                
 	        position = new Position();
 	        //promotion_pane = new PromotionPane(this);
@@ -130,9 +131,9 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	    
 	    public void loadBoardImages(){
 	        try{ 
-	            images.put(GameConstants.BOARD_IMAGE,ImageIO.read(new File(resource.getResourceString("chessboard"))));
-	            images.put(GameConstants.SELECTED,ImageIO.read(new File(resource.getResourceString("Selected"))));
-	            images.put(GameConstants.MOVED,ImageIO.read(new File(resource.getResourceString("Moved"))));
+	            images.put(Constants.BOARD_IMAGE,ImageIO.read(new File(resource.getResourceString("chessboard"))));
+	            images.put(Constants.SELECTED,ImageIO.read(new File(resource.getResourceString("Selected"))));
+	            images.put(Constants.MOVED,ImageIO.read(new File(resource.getResourceString("Moved"))));
 	        }catch(IOException ex){
 	            ex.printStackTrace();
 	        }        
@@ -180,23 +181,23 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
         public void paintComponent(Graphics g){
             if(position.board == null) return;
             super.paintComponent(g);  
-            Image scaledImage = images.get(GameConstants.BOARD_IMAGE).getScaledInstance(board_pane.getWidth()-20,board_pane.getHeight()-65,Image.SCALE_SMOOTH);
-            g.drawImage(scaledImage,10,55,this);    
+            Image scaledImage = images.get(Constants.BOARD_IMAGE).getScaledInstance(board_pane.getWidth()-20,board_pane.getHeight()-60,Image.SCALE_SMOOTH);
+            g.drawImage(scaledImage,8,55,this);    
             
             for (int i = 0; i < position.board.length-11; i++) {
-                if (position.board[i] != GameConstants.ILLEGAL) {                                                                
+                if (position.board[i] != Constants.ILLEGAL) {                                                                
 	                int x = i % 10;
 	                int y = (i - x) / 10;
 	
 	            	//Paint special cell
 	                if (piece_selected && i == move.source_location) {                
-	                    g.drawImage(images.get(GameConstants.SELECTED), x * 45, y * 45,this);                    
+	                    g.drawImage(images.get(Constants.SELECTED), x * 45, y * 45,this);                    
 	                }else if(!piece_selected && move.destination == i && 
-	                        (position.board[i]==GameConstants.EMPTY || position.board[i]<0)){
-	                    g.drawImage(images.get(GameConstants.MOVED), x * 45, y * 45, this);                                        
+	                        (position.board[i]==Constants.EMPTY || position.board[i]<0)){
+	                    g.drawImage(images.get(Constants.MOVED), x * 45, y * 45, this);                                        
 	                }
 	
-	                if (position.board[i] != GameConstants.EMPTY) {
+	                if (position.board[i] != Constants.EMPTY) {
 		                if (position.board[i] > 0) {          
 		                    int piece = position.player1_pieces[position.board[i]].value;
 		                    g.drawImage(images.get(piece), x*45, y*45, this);
@@ -207,16 +208,18 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	                }
                 }
             } 
-            if(state == GameConstants.ANIMATING){
+            if(state == Constants.ANIMATING){
                 g.drawImage(animating_image, movingX, movingY, this);
+                togglePlayer();
             }
         }
 
         @Override
         public void mouseClicked(MouseEvent e) {
             int location = boardValue(e.getY())*10+boardValue(e.getX());              
-            if(position.board[location] == GameConstants.ILLEGAL) return;
-            if((!piece_selected || position.board[location]>0) && position.board[location] != GameConstants.EMPTY){
+            if(position.board[location] == Constants.ILLEGAL) return;
+            if((!piece_selected || (activePlayer == Constants.PLAYER1_MOVE && position.board[location]>0) 
+            		|| (activePlayer == Constants.PLAYER2_MOVE && position.board[location]<0)) && position.board[location] != Constants.EMPTY){
 //                if(position.board[location]>0){
                     piece_selected = true;
                     move.source_location = location;
@@ -224,7 +227,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
             }else if(piece_selected){
                 piece_selected = false;
                 move.destination = location;     
-                state = GameConstants.PREPARE_ANIMATION;
+                state = Constants.PREPARE_ANIMATION;
             }
             repaint();
         }
@@ -276,9 +279,9 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
       loadPieceImages();
       this.board_pane.repaint();
       if (this.is_white) {
-        this.state = GameConstants.PLAYER1_MOVE;
+        this.state = Constants.PLAYER1_MOVE;
       } else {
-        this.state = GameConstants.PLAYER2_MOVE;
+        this.state = Constants.PLAYER2_MOVE;
       }
       this.castling = false;
       play();
@@ -289,17 +292,17 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
             public void run(){
                 while(true){           
                     switch(state){
-                        case GameConstants.PLAYER1_MOVE:    
+                        case Constants.PLAYER1_MOVE:    
                             break;
-                        case GameConstants.PLAYER2_MOVE:             
+                        case Constants.PLAYER2_MOVE:             
                             break;
-                        case GameConstants.PREPARE_ANIMATION:
+                        case Constants.PREPARE_ANIMATION:
                             prepareAnimation();
                             break;
-                        case GameConstants.ANIMATING:
+                        case Constants.ANIMATING:
                             animate();
                             break;                        
-                        case GameConstants.GAME_ENDED: return;
+                        case Constants.GAME_ENDED: return;
                     }
                     try{                        
                         Thread.sleep(3);
@@ -345,36 +348,36 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
                 board_pane.deltaY = (dY>0)?Math.abs(dY/dX):-(Math.abs(dY/dX));
             }
         }          
-        state = GameConstants.ANIMATING;
+        state = Constants.ANIMATING;
     }
     public void animate(){
         if (board_pane.movingX == board_pane.desX * 45 && board_pane.movingY == board_pane.desY * 45) {                                           
             board_pane.repaint();            
             int source_square = position.board[move.source_location];            
             if(source_square>0){                
-                state = GameConstants.PLAYER2_MOVE;                                               
+                state = Constants.PLAYER2_MOVE;                                               
             }else {
                 if(move.destination > 90 && move.destination<98 
                         && position.player2_pieces[-source_square].value == Piece.PAWN)
                     //promoteComputerPawn();
-                state = GameConstants.PLAYER1_MOVE;
+                state = Constants.PLAYER1_MOVE;
             }                        
             position.update(move);       
             if(source_square>0){
                 if(castling){   
                     //prepareCastlingAnimation();
-                      state = GameConstants.PREPARE_ANIMATION;
+                      state = Constants.PREPARE_ANIMATION;
                 }else if(move.destination > 20 && move.destination < 29 && 
                         position.player1_pieces[source_square].value == Piece.PAWN){
                     //promoteHumanPawn();                    
                 }
             }else{
-//                if (gameEnded(GameConstants.PLAYER1)) {
-//                    state = GameConstants.GAME_ENDED;
+//                if (gameEnded(Constants.PLAYER1)) {
+//                    state = Constants.GAME_ENDED;
 //                    return;
 //                }
             }
-//            if(!castling && state != GameConstants.PROMOTING) 
+//            if(!castling && state != Constants.PROMOTING) 
 //                newHistoryPosition();
 //            if(castling) castling = false;
         }
@@ -385,12 +388,71 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
     }
 
 	private void togglePlayer() {
-		if (state == GameConstants.PLAYER1_MOVE)
-			state = GameConstants.PLAYER2_MOVE;
-		else
-			state = GameConstants.PLAYER1_MOVE;
-		
+		if (activePlayer == Constants.PLAYER1_MOVE) {
+			state = Constants.PLAYER2_MOVE;
+			activePlayer = Constants.PLAYER2_MOVE;
+		}
+		else {
+			state = Constants.PLAYER1_MOVE;
+			activePlayer = Constants.PLAYER1_MOVE;
+		}		
 	}
     
+    public boolean validMove(int destination){        
+        int source = move.source_location;
+        int destination_square = position.board[destination];
+        if(destination_square == Constants.ILLEGAL) return false;
+        //if(!game.safeMove(Constants.PLAYER1, source, destination)) return false;
+        boolean valid = false;
+        int piece_value = position.player1_pieces[position.board[source]].value;                        
+        switch(piece_value){
+            case Piece.PAWN:
+                if(destination == source-10 && destination_square == Constants.EMPTY) valid = true;
+                if(destination == source-20 && position.board[source-10] == Constants.EMPTY &&
+                        destination_square == Constants.EMPTY && source>80) valid = true;
+                if(destination == source-9 && destination_square<0) valid = true;
+                if(destination == source-11 && destination_square<0) valid = true;
+                break;
+            case Piece.KNIGHT:
+            case Piece.KING:
+                //if(piece_value == Piece.KING) valid = checkCastling(destination);
+                int[] destinations = null;
+                if(piece_value == Piece.KNIGHT) destinations = new int[]{source-21,source+21,source+19,source-19,                    
+                    source-12,source+12,source-8,source+8};
+                else destinations = new int[]{source+1,source-1,source+10,source-10,
+                    source+11,source-11,source+9,source-9};
+                for(int i=0; i<destinations.length; i++){
+                    if(destinations[i] == destination){
+                        if(destination_square == Constants.EMPTY || destination_square<0){
+                            valid = true;
+                            break;
+                        }
+                    }
+                }                
+                break;
+            case Piece.BISHOP:
+            case Piece.ROOK:
+            case Piece.QUEEN:
+                int[] deltas = null;
+                if(piece_value == Piece.BISHOP) deltas = new int[]{11,-11,9,-9};
+                if(piece_value == Piece.ROOK) deltas = new int[]{1,-1,10,-10};
+                if(piece_value == Piece.QUEEN) deltas = new int[]{1,-1,10,-10,11,-11,9,-9};
+                for (int i = 0; i < deltas.length; i++) {
+                    int des = source + deltas[i]; 
+                    valid = true;
+                    while (destination != des) { 
+                        destination_square = position.board[des];  
+                        if(destination_square != Constants.EMPTY){
+                            valid = false;
+                            break;
+                        }                        
+                        des += deltas[i];
+                    }
+                    if(valid) break;
+                }
+                break;
+        }        
+        return valid;
+    }
     
 }

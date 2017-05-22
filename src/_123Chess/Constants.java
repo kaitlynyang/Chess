@@ -8,7 +8,7 @@ package _123Chess;
  *
  * @author kaitlyn.yang
  */
-public class GameConstants {
+public class Constants {
     public final static int EMPTY = 55;
     public final static int ILLEGAL = 77;
     public final static int PLAYER1 = 1;
