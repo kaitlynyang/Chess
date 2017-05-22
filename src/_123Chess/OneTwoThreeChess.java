@@ -44,19 +44,19 @@ import _123Chess.Constants;
 public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListener {
 
 	 	BoardDB position;        
-	    ChessBoardPane board_pane;  
+	    ChessBoardPane boardPane;  
 	    Resource resource = new Resource();
 	    Map<Integer,Image> images = new HashMap<Integer,Image>();
-	    Map<Integer,Icon> icon_images = new HashMap<Integer,Icon>();
+	    Map<Integer,Icon> iconImages = new HashMap<Integer,Icon>();
 	    Move move = new Move();
-	    boolean piece_selected;
-	    boolean is_white;
+	    boolean pieceSelected;
+	    boolean isWhite;
 	    int state;
 	    int activePlayer = Constants.PLAYER1_MOVE;
 	    Game game;    
-	    JPanel main_pane = new JPanel(new BorderLayout());
+	    JPanel mainPane = new JPanel(new BorderLayout());
 	    boolean castling;
-	    Color bg_color = Color.decode("#e3edd5");	
+	    Color bgColor = Color.decode("#e3edd5");	
 	 
 	    
 	    /**
@@ -102,18 +102,18 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	    
 	    public OneTwoThreeChess(){
 	        //super("MyChessmate "+Constants.VERSION);                                  
-	        setContentPane(main_pane);                
+	        setContentPane(mainPane);                
 	        position = new BoardDB();
 	        //promotion_pane = new PromotionPane(this);
 	        
 	        //loadMenuIcons();
 	        loadBoardImages();
 	        
-	        board_pane = new ChessBoardPane();  
+	        boardPane = new ChessBoardPane();  
 	        
 	        //main_pane.add(createMenuPane(),BorderLayout.WEST);
-	        main_pane.add(board_pane,BorderLayout.CENTER);  
-	        main_pane.setBackground(bg_color);      
+	        mainPane.add(boardPane,BorderLayout.CENTER);  
+	        mainPane.setBackground(bgColor);      
 	        //createEastPane();
 	        
 	        pack();
@@ -170,18 +170,18 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	}
 	
     public class ChessBoardPane extends JPanel implements MouseListener{     
-        Image animating_image;
+        Image animatingImage;
         int movingX,movingY,desX,desY,deltaX,deltaY;
         public ChessBoardPane(){
             setPreferredSize(new Dimension(450, 495));
-            setBackground(bg_color);
+            setBackground(bgColor);
             addMouseListener(this);
         }
         @Override
         public void paintComponent(Graphics g){
             if(position.board == null) return;
             super.paintComponent(g);  
-            Image scaledImage = images.get(Constants.BOARD_IMAGE).getScaledInstance(board_pane.getWidth()-20,board_pane.getHeight()-60,Image.SCALE_SMOOTH);
+            Image scaledImage = images.get(Constants.BOARD_IMAGE).getScaledInstance(boardPane.getWidth()-20,boardPane.getHeight()-60,Image.SCALE_SMOOTH);
             g.drawImage(scaledImage,8,55,this);    
             
             for (int i = 0; i < position.board.length-11; i++) {
@@ -190,9 +190,9 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	                int y = (i - x) / 10;
 	
 	            	//Paint special cell
-	                if (piece_selected && i == move.source_location) {                
+	                if (pieceSelected && i == move.source_location) {                
 	                    g.drawImage(images.get(Constants.SELECTED), x * 45, y * 45,this);                    
-	                }else if(!piece_selected && move.destination == i && 
+	                }else if(!pieceSelected && move.destination == i && 
 	                        (position.board[i]==Constants.EMPTY || position.board[i]<0)){
 	                    g.drawImage(images.get(Constants.MOVED), x * 45, y * 45, this);                                        
 	                }
@@ -209,7 +209,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
                 }
             } 
             if(state == Constants.ANIMATING){
-                g.drawImage(animating_image, movingX, movingY, this);
+                g.drawImage(animatingImage, movingX, movingY, this);
                 togglePlayer();
             }
         }
@@ -218,15 +218,15 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
         public void mouseClicked(MouseEvent e) {
             int location = boardValue(e.getY())*10+boardValue(e.getX());              
             if(position.board[location] == Constants.ILLEGAL) return;
-            if(!piece_selected && 
+            if(!pieceSelected && 
             		((activePlayer == Constants.PLAYER1_MOVE && position.board[location]>0) || (activePlayer == Constants.PLAYER2_MOVE && position.board[location]<0)) 
             		&& position.board[location] != Constants.EMPTY) {
 //                if(position.board[location]>0){
-                    piece_selected = true;
+                    pieceSelected = true;
                     move.source_location = location;
 //                }
-            }else if(piece_selected){
-                piece_selected = false;
+            }else if(pieceSelected){
+                pieceSelected = false;
                 move.destination = location;     
                 state = Constants.PREPARE_ANIMATION;
             }
@@ -259,8 +259,8 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
       {
         for (int i = 0; i < resource_keys.length; i++)
         {
-          this.images.put(Integer.valueOf(images_keys[i]), ImageIO.read(new File(this.resource.getResourceString((this.is_white ? "w" : "b") + resource_keys[i]))));
-          this.images.put(Integer.valueOf(-images_keys[i]), ImageIO.read(new File(this.resource.getResourceString((this.is_white ? "b" : "w") + resource_keys[i]))));
+          this.images.put(Integer.valueOf(images_keys[i]), ImageIO.read(new File(this.resource.getResourceString((this.isWhite ? "w" : "b") + resource_keys[i]))));
+          this.images.put(Integer.valueOf(-images_keys[i]), ImageIO.read(new File(this.resource.getResourceString((this.isWhite ? "b" : "w") + resource_keys[i]))));
         }
       }
       catch (IOException ex)
@@ -271,15 +271,15 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 
     public void newGame()
     {
-      this.is_white = true;//this.play_options.white_button.isSelected();
+      this.isWhite = true;//this.play_options.white_button.isSelected();
       this.move.source_location = -1;
       this.move.destination = -1;
       this.position = new BoardDB();
-      this.position.initialize(this.is_white);
+      this.position.initialize(this.isWhite);
       this.game = new Game(this.position);
       loadPieceImages();
-      this.board_pane.repaint();
-      if (this.is_white) {
+      this.boardPane.repaint();
+      if (this.isWhite) {
         this.state = Constants.PLAYER1_MOVE;
       } else {
         this.state = Constants.PLAYER2_MOVE;
@@ -323,37 +323,37 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
         }else {
             animating_image_key = -position.player2_pieces[-position.board[move.source_location]].value;
         }        
-        board_pane.animating_image = images.get(animating_image_key);
+        boardPane.animatingImage = images.get(animating_image_key);
         int x = move.source_location%10;        
         int y = (move.source_location-x)/10;
-        board_pane.desX = move.destination%10;
-        board_pane.desY = (move.destination-board_pane.desX)/10;
-        int dX = board_pane.desX-x;
-        int dY = board_pane.desY-y;           
-        board_pane.movingX = x*45;
-        board_pane.movingY = y*45;
+        boardPane.desX = move.destination%10;
+        boardPane.desY = (move.destination-boardPane.desX)/10;
+        int dX = boardPane.desX-x;
+        int dY = boardPane.desY-y;           
+        boardPane.movingX = x*45;
+        boardPane.movingY = y*45;
         if(Math.abs(dX)>Math.abs(dY)){
             if(dY == 0){
-                board_pane.deltaX = (dX>0)?1:-1;
-                board_pane.deltaY = 0;
+                boardPane.deltaX = (dX>0)?1:-1;
+                boardPane.deltaY = 0;
             }else{
-                board_pane.deltaX = (dX>0)?Math.abs(dX/dY):-(Math.abs(dX/dY));
-                board_pane.deltaY = (dY>0)?1:-1;
+                boardPane.deltaX = (dX>0)?Math.abs(dX/dY):-(Math.abs(dX/dY));
+                boardPane.deltaY = (dY>0)?1:-1;
             }
         }else{
             if(dX == 0){
-                board_pane.deltaY = (dY>0)?1:-1;
-                board_pane.deltaX = 0;
+                boardPane.deltaY = (dY>0)?1:-1;
+                boardPane.deltaX = 0;
             }else{
-                board_pane.deltaX = (dX>0)?1:-1;
-                board_pane.deltaY = (dY>0)?Math.abs(dY/dX):-(Math.abs(dY/dX));
+                boardPane.deltaX = (dX>0)?1:-1;
+                boardPane.deltaY = (dY>0)?Math.abs(dY/dX):-(Math.abs(dY/dX));
             }
         }          
         state = Constants.ANIMATING;
     }
     public void animate(){
-        if (board_pane.movingX == board_pane.desX * 45 && board_pane.movingY == board_pane.desY * 45) {                                           
-            board_pane.repaint();            
+        if (boardPane.movingX == boardPane.desX * 45 && boardPane.movingY == boardPane.desY * 45) {                                           
+            boardPane.repaint();            
             int source_square = position.board[move.source_location];            
             if(source_square>0){                
                 state = Constants.PLAYER2_MOVE;                                               
@@ -382,9 +382,9 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 //                newHistoryPosition();
 //            if(castling) castling = false;
         }
-        board_pane.movingX += board_pane.deltaX;
-        board_pane.movingY += board_pane.deltaY;
-        board_pane.repaint();
+        boardPane.movingX += boardPane.deltaX;
+        boardPane.movingY += boardPane.deltaY;
+        boardPane.repaint();
         //togglePlayer();
     }
 
