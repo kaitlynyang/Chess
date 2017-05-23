@@ -85,22 +85,22 @@ public class BoardDB {
     }    
     public void update(Move move){
         this.last_move = move;   
-        int source_index = board[move.source_location];
-        int destination_index = board[move.destination];  
+        int source_index = board[move.from];
+        int destination_index = board[move.to];  
         if(source_index>0){
             player1_pieces[source_index].has_moved = true;
-            player1_pieces[source_index].location = move.destination;
+            player1_pieces[source_index].location = move.to;
             if(destination_index<0){                
                 player2_pieces[-destination_index] = null;
             }            
         }else{
             player2_pieces[-source_index].has_moved = true;
-            player2_pieces[-source_index].location = move.destination;
+            player2_pieces[-source_index].location = move.to;
             if(destination_index>0 && destination_index != Constants.EMPTY){                
                 player1_pieces[destination_index] = null;
             }            
         }
-        board[move.source_location] = Constants.EMPTY;
-        board[move.destination] = source_index;
+        board[move.from] = Constants.EMPTY;
+        board[move.to] = source_index;
     }
 }

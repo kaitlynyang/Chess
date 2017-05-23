@@ -9,14 +9,15 @@ package _123Chess;
  * @author kaitlyn.yang
  */
 public class Move {
-    public int source_location;
-    public int destination;
+    public int from;
+    public int to;
+    
     public Move(){
-        source_location = -1;
-        destination = -1;
+        from = -1;
+        to = -1;
     }
-    public Move(int source_location, int destination){
-        this.source_location = source_location;
-        this.destination = destination;
+    public Move(int f, int t){
+        this.from = f;
+        this.to = t;
     }
 }
