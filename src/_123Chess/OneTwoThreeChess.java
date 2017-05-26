@@ -59,11 +59,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	    Color bgColor = Color.decode("#e3edd5");	
 	 
 	    
-	    /**
-	     * @param args the command line arguments
-	     */
 	    public static void main(String[] args) {
-	        // TODO code application logic here
 	        SwingUtilities.invokeLater(new Runnable(){
 	            @Override
 	            public void run(){
@@ -210,7 +206,6 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
             } 
             if(state == Constants.ANIMATING){
                 g.drawImage(animatingImage, movingX, movingY, this);
-                togglePlayer();
             }
         }
 
@@ -218,14 +213,12 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
         public void mouseClicked(MouseEvent e) {
             int location = boardValue(e.getY())*10+boardValue(e.getX());              
             if(position.board[location] == Constants.ILLEGAL) return;
-            if(!pieceSelected && 
-            		((activePlayer == Constants.PLAYER1_MOVE && position.board[location]>0) || (activePlayer == Constants.PLAYER2_MOVE && position.board[location]<0)) 
-            		&& position.board[location] != Constants.EMPTY) {
-//                if(position.board[location]>0){
+            if(!pieceSelected && position.board[location] != Constants.EMPTY &&
+            		((activePlayer == Constants.PLAYER1_MOVE && position.board[location]>0) 
+            				|| (activePlayer == Constants.PLAYER2_MOVE && position.board[location]<0))) {
                     pieceSelected = true;
                     move.from = location;
-//                }
-            }else if(pieceSelected){
+            }else if(pieceSelected) {
                 pieceSelected = false;
                 move.to = location;     
                 state = Constants.PREPARE_ANIMATION;
@@ -334,18 +327,18 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
         boardPane.movingY = y*45;
         if(Math.abs(dX)>Math.abs(dY)){
             if(dY == 0){
-                boardPane.deltaX = (dX>0)?1:-1;
+                boardPane.deltaX = (dX>0)?5:-5;
                 boardPane.deltaY = 0;
             }else{
                 boardPane.deltaX = (dX>0)?Math.abs(dX/dY):-(Math.abs(dX/dY));
-                boardPane.deltaY = (dY>0)?1:-1;
+                boardPane.deltaY = (dY>0)?5:-5;
             }
         }else{
             if(dX == 0){
-                boardPane.deltaY = (dY>0)?1:-1;
+                boardPane.deltaY = (dY>0)?5:-5;
                 boardPane.deltaX = 0;
             }else{
-                boardPane.deltaX = (dX>0)?1:-1;
+                boardPane.deltaX = (dX>0)?5:-5;
                 boardPane.deltaY = (dY>0)?Math.abs(dY/dX):-(Math.abs(dY/dX));
             }
         }          
@@ -355,15 +348,14 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
         if (boardPane.movingX == boardPane.desX * 45 && boardPane.movingY == boardPane.desY * 45) {                                           
             boardPane.repaint();            
             int source_square = position.board[move.from];            
-            if(source_square>0){                
-                state = Constants.PLAYER2_MOVE;                                               
-            }else {
-                if(move.to > 90 && move.to<98 
-                        && position.player2_pieces[-source_square].value == Piece.PAWN)
-                    //promoteComputerPawn();
-                state = Constants.PLAYER1_MOVE;
-            }                        
-            position.update(move);       
+//            if(source_square>0){                
+//            }else {
+//                if(move.to > 90 && move.to<98 
+//                        && position.player2_pieces[-source_square].value == Piece.PAWN)
+//                    //promoteComputerPawn();
+//            }                        
+            position.update(move); 
+            togglePlayer();
             if(source_square>0){
                 if(castling){   
                     //prepareCastlingAnimation();
