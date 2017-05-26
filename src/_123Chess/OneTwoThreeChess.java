@@ -327,18 +327,18 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
         boardPane.movingY = y*45;
         if(Math.abs(dX)>Math.abs(dY)){
             if(dY == 0){
-                boardPane.deltaX = (dX>0)?5:-5;
+                boardPane.deltaX = (dX>0)?1:-1;
                 boardPane.deltaY = 0;
             }else{
                 boardPane.deltaX = (dX>0)?Math.abs(dX/dY):-(Math.abs(dX/dY));
-                boardPane.deltaY = (dY>0)?5:-5;
+                boardPane.deltaY = (dY>0)?1:-1;
             }
         }else{
             if(dX == 0){
-                boardPane.deltaY = (dY>0)?5:-5;
+                boardPane.deltaY = (dY>0)?1:-1;
                 boardPane.deltaX = 0;
             }else{
-                boardPane.deltaX = (dX>0)?5:-5;
+                boardPane.deltaX = (dX>0)?1:-1;
                 boardPane.deltaY = (dY>0)?Math.abs(dY/dX):-(Math.abs(dY/dX));
             }
         }          
