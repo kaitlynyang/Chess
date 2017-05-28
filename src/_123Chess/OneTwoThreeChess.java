@@ -29,7 +29,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 //import JFrame;
-import _123Chess.Game;
+import _123Chess.Engine;
 import _123Chess.Constants;
 import _123Chess.Move;
 import _123Chess.Piece;
@@ -52,8 +52,8 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	    boolean pieceSelected;
 	    boolean isWhite;
 	    int state;
-	    int activePlayer = Constants.PLAYER1_MOVE;
-	    Game game;    
+	    int activePlayer = Constants.PLAYER1;
+	    Engine engine;    
 	    JPanel mainPane = new JPanel(new BorderLayout());
 	    boolean castling;
 	    Color bgColor = Color.decode("#e3edd5");	
@@ -189,7 +189,9 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	                if (pieceSelected && i == move.from) {                
 	                    g.drawImage(images.get(Constants.SELECTED), x * 45, y * 45,this);                    
 	                }else if(!pieceSelected && move.to == i && 
-	                        (position.board[i]==Constants.EMPTY || position.board[i]<0)){
+	                        (position.board[i]==Constants.EMPTY || 
+	                        ((activePlayer == Constants.PLAYER1 && position.board[i]<0) || 
+	                        		(activePlayer == Constants.PLAYER2 && position.board[i]>0)))){
 	                    g.drawImage(images.get(Constants.MOVED), x * 45, y * 45, this);                                        
 	                }
 	
@@ -214,15 +216,18 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
             int location = boardValue(e.getY())*10+boardValue(e.getX());              
             if(position.board[location] == Constants.ILLEGAL) return;
             if(!pieceSelected && position.board[location] != Constants.EMPTY &&
-            		((activePlayer == Constants.PLAYER1_MOVE && position.board[location]>0) 
-            				|| (activePlayer == Constants.PLAYER2_MOVE && position.board[location]<0))) {
+            		((activePlayer == Constants.PLAYER1 && position.board[location]>0) 
+            				|| (activePlayer == Constants.PLAYER2 && position.board[location]<0))) {
                     pieceSelected = true;
                     move.from = location;
-            }else if(pieceSelected) {
+            }else if(pieceSelected && ((activePlayer == Constants.PLAYER1 && validPlayer1Move(location))
+            		|| (activePlayer == Constants.PLAYER2 && validPlayer2Move(location)))) {
                 pieceSelected = false;
                 move.to = location;     
                 state = Constants.PREPARE_ANIMATION;
             }
+            else
+            	return;
             repaint();
         }
 
@@ -269,7 +274,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
       this.move.to = -1;
       this.position = new BoardDB();
       this.position.initialize(this.isWhite);
-      this.game = new Game(this.position);
+      this.engine = new Engine(this.position);
       loadPieceImages();
       this.boardPane.repaint();
       if (this.isWhite) {
@@ -381,21 +386,21 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
     }
 
 	private void togglePlayer() {
-		if (activePlayer == Constants.PLAYER1_MOVE) {
+		if (activePlayer == Constants.PLAYER1) {
 			state = Constants.PLAYER2_MOVE;
-			activePlayer = Constants.PLAYER2_MOVE;
+			activePlayer = Constants.PLAYER2;
 		}
 		else {
 			state = Constants.PLAYER1_MOVE;
-			activePlayer = Constants.PLAYER1_MOVE;
+			activePlayer = Constants.PLAYER1;
 		}		
 	}
     
-    public boolean validMove(int destination){        
+    public boolean validPlayer1Move(int destination){        
         int source = move.from;
         int destination_square = position.board[destination];
         if(destination_square == Constants.ILLEGAL) return false;
-        //if(!game.safeMove(Constants.PLAYER1, source, to)) return false;
+        if(!engine.safeMove(Constants.PLAYER1, source, destination)) return false;
         boolean valid = false;
         int piece_value = position.player1_pieces[position.board[source]].value;                        
         switch(piece_value){
@@ -417,6 +422,63 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
                 for(int i=0; i<destinations.length; i++){
                     if(destinations[i] == destination){
                         if(destination_square == Constants.EMPTY || destination_square<0){
+                            valid = true;
+                            break;
+                        }
+                    }
+                }                
+                break;
+            case Piece.BISHOP:
+            case Piece.ROOK:
+            case Piece.QUEEN:
+                int[] deltas = null;
+                if(piece_value == Piece.BISHOP) deltas = new int[]{11,-11,9,-9};
+                if(piece_value == Piece.ROOK) deltas = new int[]{1,-1,10,-10};
+                if(piece_value == Piece.QUEEN) deltas = new int[]{1,-1,10,-10,11,-11,9,-9};
+                for (int i = 0; i < deltas.length; i++) {
+                    int des = source + deltas[i]; 
+                    valid = true;
+                    while (destination != des) { 
+                        destination_square = position.board[des];  
+                        if(destination_square != Constants.EMPTY){
+                            valid = false;
+                            break;
+                        }                        
+                        des += deltas[i];
+                    }
+                    if(valid) break;
+                }
+                break;
+        }        
+        return valid;
+    }
+    
+    public boolean validPlayer2Move(int destination){        
+        int source = move.from;
+        int destination_square = position.board[destination];
+        if(destination_square == Constants.ILLEGAL) return false;
+        if(!engine.safeMove(Constants.PLAYER2, source, destination)) return false;
+        boolean valid = false;
+        int piece_value = position.player2_pieces[-position.board[source]].value;                        
+        switch(piece_value){
+            case Piece.PAWN:
+                if(destination == source+10 && destination_square == Constants.EMPTY) valid = true;
+                if(destination == source+20 && position.board[source+10] == Constants.EMPTY &&
+                        destination_square == Constants.EMPTY && source<40) valid = true;
+                if(destination == source+9 && destination_square>0) valid = true;
+                if(destination == source+11 && destination_square>0) valid = true;
+                break;
+            case Piece.KNIGHT:
+            case Piece.KING:
+                //if(piece_value == Piece.KING) valid = checkCastling(to);
+                int[] destinations = null;
+                if(piece_value == Piece.KNIGHT) destinations = new int[]{source-21,source+21,source+19,source-19,                    
+                    source-12,source+12,source-8,source+8};
+                else destinations = new int[]{source+1,source-1,source+10,source-10,
+                    source+11,source-11,source+9,source-9};
+                for(int i=0; i<destinations.length; i++){
+                    if(destinations[i] == destination){
+                        if(destination_square == Constants.EMPTY || destination_square>0){
                             valid = true;
                             break;
                         }
