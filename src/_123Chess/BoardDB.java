@@ -33,8 +33,9 @@ public class BoardDB {
             }
         }
         if(last_move != null) update(last_move);
-    }    
-    public void initialize(boolean player1White){         
+    }  
+    
+    public void reset(boolean player1White){         
         player1_pieces[1] = new Piece(Piece.KNIGHT,92);
         player1_pieces[2] = new Piece(Piece.KNIGHT,97);
         player1_pieces[3] = new Piece(Piece.BISHOP,93);
@@ -83,6 +84,7 @@ public class BoardDB {
             }
         }
     }    
+    
     public void update(Move move){
         this.last_move = move;   
         int source_index = board[move.from];

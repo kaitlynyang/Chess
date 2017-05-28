@@ -44,7 +44,7 @@ import _123Chess.Constants;
 public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListener {
 
 	 	BoardDB position;        
-	    ChessBoardPane boardPane;  
+	    BoardPane boardPane;  
 	    Resource resource = new Resource();
 	    Map<Integer,Image> images = new HashMap<Integer,Image>();
 	    Map<Integer,Icon> iconImages = new HashMap<Integer,Icon>();
@@ -105,7 +105,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	        //loadMenuIcons();
 	        loadBoardImages();
 	        
-	        boardPane = new ChessBoardPane();  
+	        boardPane = new BoardPane();  
 	        
 	        //main_pane.add(createMenuPane(),BorderLayout.WEST);
 	        mainPane.add(boardPane,BorderLayout.CENTER);  
@@ -165,10 +165,10 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 
 	}
 	
-    public class ChessBoardPane extends JPanel implements MouseListener{     
+    public class BoardPane extends JPanel implements MouseListener{     
         Image animatingImage;
         int movingX,movingY,desX,desY,deltaX,deltaY;
-        public ChessBoardPane(){
+        public BoardPane(){
             setPreferredSize(new Dimension(450, 495));
             setBackground(bgColor);
             addMouseListener(this);
@@ -206,7 +206,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	                }
                 }
             } 
-            if(state == Constants.ANIMATING){
+            if(state == Constants.MOVING){
                 g.drawImage(animatingImage, movingX, movingY, this);
             }
         }
@@ -224,7 +224,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
             		|| (activePlayer == Constants.PLAYER2 && validPlayer2Move(location)))) {
                 pieceSelected = false;
                 move.to = location;     
-                state = Constants.PREPARE_ANIMATION;
+                state = Constants.PREPARE_MOVE;
             }
             else
             	return;
@@ -252,7 +252,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
     public void loadPieceImages()
     {
       char[] resource_keys = { 'p', 'n', 'b', 'r', 'q', 'k' };
-      int[] images_keys = { 100, 320, 325, 500, 900, 1000000 };
+      int[] images_keys = { Piece.PAWN, Piece.KNIGHT, Piece.BISHOP, Piece.ROOK, Piece.QUEEN, Piece.KING };
       try
       {
         for (int i = 0; i < resource_keys.length; i++)
@@ -273,7 +273,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
       this.move.from = -1;
       this.move.to = -1;
       this.position = new BoardDB();
-      this.position.initialize(this.isWhite);
+      this.position.reset(this.isWhite);
       this.engine = new Engine(this.position);
       loadPieceImages();
       this.boardPane.repaint();
@@ -295,11 +295,11 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
                             break;
                         case Constants.PLAYER2_MOVE:             
                             break;
-                        case Constants.PREPARE_ANIMATION:
-                            prepareAnimation();
+                        case Constants.PREPARE_MOVE:
+                            prepareMove();
                             break;
-                        case Constants.ANIMATING:
-                            animate();
+                        case Constants.MOVING:
+                            moveOneStep();
                             break;                        
                         case Constants.GAME_ENDED: return;
                     }
@@ -314,7 +314,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
         t.start();
     }
     
-    public void prepareAnimation(){
+    public void prepareMove(){
         int animating_image_key = 0;
         if(position.board[move.from]>0){
             animating_image_key = position.player1_pieces[position.board[move.from]].value;
@@ -347,9 +347,9 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
                 boardPane.deltaY = (dY>0)?Math.abs(dY/dX):-(Math.abs(dY/dX));
             }
         }          
-        state = Constants.ANIMATING;
+        state = Constants.MOVING;
     }
-    public void animate(){
+    public void moveOneStep(){
         if (boardPane.movingX == boardPane.desX * 45 && boardPane.movingY == boardPane.desY * 45) {                                           
             boardPane.repaint();            
             int source_square = position.board[move.from];            
@@ -364,7 +364,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
             if(source_square>0){
                 if(castling){   
                     //prepareCastlingAnimation();
-                      state = Constants.PREPARE_ANIMATION;
+                      state = Constants.PREPARE_MOVE;
                 }else if(move.to > 20 && move.to < 29 && 
                         position.player1_pieces[source_square].value == Piece.PAWN){
                     //promoteHumanPawn();                    
