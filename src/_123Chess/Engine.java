@@ -71,20 +71,23 @@ public class Engine {
         int[] destinations = {location-21,location+21,location+19,location-19,
             location-12,location+12,location-8,location+8};
         for(int destination:destinations){
-            int des_square = position.board[destination];
-            if(des_square == Constants.ILLEGAL) continue;
-            if(king == player1_king){                
-                if(des_square<0 && position.player2_pieces[-des_square].value == Piece.KNIGHT){
-                    checked = true;
-                    break;
-                }
-            }else{
-                if(des_square>0 && des_square != Constants.EMPTY && 
-                        position.player1_pieces[des_square].value == Piece.KNIGHT){
-                    checked = true;
-                    break;
-                }
-            }
+        	if (destination > 0 && destination < 99) {
+	            int des_square = position.board[destination];
+	            if(des_square != Constants.ILLEGAL) {
+		            if(king == player1_king){                
+		                if(des_square<0 && position.player2_pieces[-des_square].value == Piece.KNIGHT){
+		                    checked = true;
+		                    break;
+		                }
+		            }else{
+		                if(des_square>0 && des_square != Constants.EMPTY && 
+		                        position.player1_pieces[des_square].value == Piece.KNIGHT){
+		                    checked = true;
+		                    break;
+		                }
+		            }
+	            }
+        	}
         }
         return checked;
     }

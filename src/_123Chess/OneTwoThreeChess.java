@@ -8,6 +8,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
@@ -23,6 +25,9 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -56,7 +61,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	    Engine engine;    
 	    JPanel mainPane = new JPanel(new BorderLayout());
 	    boolean castling;
-	    Color bgColor = Color.decode("#e3edd5");	
+	    Color bgColor = Color.decode("#e3edd5");
 	 
 	    
 	    public static void main(String[] args) {
@@ -97,10 +102,13 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	    }	
 	    
 	    public OneTwoThreeChess(){
-	        //super("MyChessmate "+Constants.VERSION);                                  
+	        super("123 Chess "+Constants.VERSION);                                  
 	        setContentPane(mainPane);                
 	        position = new BoardDB();
 	        //promotion_pane = new PromotionPane(this);
+	        JMenuBar menuBar = new JMenuBar();
+	        setJMenuBar(menuBar);
+	        menuBar.add(createGameMenu());
 	        
 	        //loadMenuIcons();
 	        loadBoardImages();
@@ -110,11 +118,10 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	        //main_pane.add(createMenuPane(),BorderLayout.WEST);
 	        mainPane.add(boardPane,BorderLayout.CENTER);  
 	        mainPane.setBackground(bgColor);      
-	        //createEastPane();
 	        
 	        pack();
 	        Dimension size = getSize();
-	        size.height = 523;
+	        size.height = 543;
 	        setSize(size);
 	        
 	        this.newGame();
@@ -123,9 +130,54 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	                //quit();
 	            }
 	        });
-	    }  
+	    } 
 	    
-	    public void loadBoardImages(){
+	    public JMenu createGameMenu() {
+	    	JMenu menu = new JMenu("Game");
+	    	menu.add(createNewGameItem());
+	    	menu.add(createQuitGameItem());
+	    	return menu;
+	    }
+	    
+	    private JMenuItem createNewGameItem() {
+			JMenuItem item = new JMenuItem("New Game");
+			class MenuItemListener implements ActionListener
+			{
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					newGame();					
+				}				
+			}
+			ActionListener listener = new MenuItemListener();
+			item.addActionListener(listener);
+			return item;
+		}
+
+		private JMenuItem createQuitGameItem() {
+			JMenuItem item = new JMenuItem("Quit");
+			class MenuItemListener implements ActionListener
+			{
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					quit();					
+				}				
+			}
+			ActionListener listener = new MenuItemListener();
+			item.addActionListener(listener);
+			return item;
+		}
+		
+		public void quit(){
+	        int option = JOptionPane.showConfirmDialog(null,"Are you sure you want to quit?", 
+	                    "MyChessmate1.1", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+	        if(option == JOptionPane.YES_OPTION)
+	            System.exit(0);
+	        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+	    }
+		
+		public void loadBoardImages(){
 	        try{ 
 	            images.put(Constants.BOARD_IMAGE,ImageIO.read(new File(resource.getResourceString("chessboard"))));
 	            images.put(Constants.SELECTED,ImageIO.read(new File(resource.getResourceString("Selected"))));
@@ -177,8 +229,8 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
         public void paintComponent(Graphics g){
             if(position.board == null) return;
             super.paintComponent(g);  
-            Image scaledImage = images.get(Constants.BOARD_IMAGE).getScaledInstance(boardPane.getWidth()-20,boardPane.getHeight()-60,Image.SCALE_SMOOTH);
-            g.drawImage(scaledImage,8,55,this);    
+            Image scaledImage = images.get(Constants.BOARD_IMAGE).getScaledInstance(442,448,Image.SCALE_SMOOTH);
+            g.drawImage(scaledImage,8,1,this);    
             
             for (int i = 0; i < position.board.length-11; i++) {
                 if (position.board[i] != Constants.ILLEGAL) {                                                                
@@ -220,7 +272,13 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
             				|| (activePlayer == Constants.PLAYER2 && position.board[location]<0))) {
                     pieceSelected = true;
                     move.from = location;
-            }else if(pieceSelected && ((activePlayer == Constants.PLAYER1 && validPlayer1Move(location))
+            }
+            else if( pieceSelected && position.board[location] != Constants.EMPTY &&
+            		((activePlayer == Constants.PLAYER1 && position.board[location]>0) 
+            				|| (activePlayer == Constants.PLAYER2 && position.board[location]<0))) {
+                    move.from = location;
+            }
+            else if(pieceSelected && ((activePlayer == Constants.PLAYER1 && validPlayer1Move(location))
             		|| (activePlayer == Constants.PLAYER2 && validPlayer2Move(location)))) {
                 pieceSelected = false;
                 move.to = location;     
@@ -360,29 +418,43 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 //                    //promoteComputerPawn();
 //            }                        
             position.update(move); 
-            togglePlayer();
+            if (!castling) togglePlayer();
+            
             if(source_square>0){
                 if(castling){   
-                    //prepareCastlingAnimation();
-                      state = Constants.PREPARE_MOVE;
-                }else if(move.to > 20 && move.to < 29 && 
+                    prepareCastlingMove();
+                    state = Constants.PREPARE_MOVE;
+                }
+                else if(move.to > 20 && move.to < 29 && 
                         position.player1_pieces[source_square].value == Piece.PAWN){
                     //promoteHumanPawn();                    
                 }
-            }else{
-//                if (gameEnded(Constants.PLAYER1)) {
-//                    state = Constants.GAME_ENDED;
-//                    return;
-//                }
             }
-//            if(!castling && state != Constants.PROMOTING) 
-//                newHistoryPosition();
-//            if(castling) castling = false;
+            
+            if(castling) castling = false;
         }
         boardPane.movingX += boardPane.deltaX;
         boardPane.movingY += boardPane.deltaY;
         boardPane.repaint();
-        //togglePlayer();
+    }
+
+    public void prepareCastlingMove(){
+        if(move.to == 87){
+            move.from = 88;
+            move.to = 86;
+        }
+        else if(move.to == 83){
+            move.from = 81;
+            move.to = 84;
+        }
+        else if(move.to == 17){
+            move.from = 18;
+            move.to = 16;
+        }
+        else if(move.to == 13){
+            move.from = 11;
+            move.to = 14;
+        }
     }
 
 	private void togglePlayer() {
@@ -407,13 +479,13 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
             case Piece.PAWN:
                 if(destination == source-10 && destination_square == Constants.EMPTY) valid = true;
                 if(destination == source-20 && position.board[source-10] == Constants.EMPTY &&
-                        destination_square == Constants.EMPTY && source>80) valid = true;
+                        destination_square == Constants.EMPTY && source>70) valid = true;
                 if(destination == source-9 && destination_square<0) valid = true;
                 if(destination == source-11 && destination_square<0) valid = true;
                 break;
             case Piece.KNIGHT:
             case Piece.KING:
-                //if(piece_value == Piece.KING) valid = checkCastling(to);
+            	if(piece_value == Piece.KING) valid = isPlayer1Castling(destination);
                 int[] destinations = null;
                 if(piece_value == Piece.KNIGHT) destinations = new int[]{source-21,source+21,source+19,source-19,                    
                     source-12,source+12,source-8,source+8};
@@ -464,13 +536,13 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
             case Piece.PAWN:
                 if(destination == source+10 && destination_square == Constants.EMPTY) valid = true;
                 if(destination == source+20 && position.board[source+10] == Constants.EMPTY &&
-                        destination_square == Constants.EMPTY && source<40) valid = true;
+                        destination_square == Constants.EMPTY && source<30) valid = true;
                 if(destination == source+9 && destination_square>0) valid = true;
                 if(destination == source+11 && destination_square>0) valid = true;
                 break;
             case Piece.KNIGHT:
             case Piece.KING:
-                //if(piece_value == Piece.KING) valid = checkCastling(to);
+                if(piece_value == Piece.KING) valid = isPlayer2Castling(destination);
                 int[] destinations = null;
                 if(piece_value == Piece.KNIGHT) destinations = new int[]{source-21,source+21,source+19,source-19,                    
                     source-12,source+12,source-8,source+8};
@@ -508,6 +580,64 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
                 break;
         }        
         return valid;
+    }
+    
+    public boolean isPlayer1Castling(int destination){        
+        Piece king = position.player1_pieces[8];
+        Piece right_rook = position.player1_pieces[6];
+        Piece left_rook = position.player1_pieces[5];
+        
+        if(king.has_moved) return false;              
+        int source = move.from;
+        
+        if(right_rook == null && left_rook == null) return false;
+        if(right_rook != null && right_rook.has_moved && 
+                left_rook != null && left_rook.has_moved) return false;
+            
+        if(source != 85) return false;            
+        if(destination != 87 && destination != 83) return false;
+        if(destination == 87){
+            if(position.board[86] != Constants.EMPTY) return false;
+            if(position.board[87] != Constants.EMPTY) return false;
+            if(!engine.safeMove(Constants.PLAYER1,source,86)) return false;
+            if(!engine.safeMove(Constants.PLAYER1,source,87)) return false;
+        }
+        else if(destination == 83){
+            if(position.board[84] != Constants.EMPTY) return false;
+            if(position.board[83] != Constants.EMPTY) return false;
+            if(!engine.safeMove(Constants.PLAYER1,source,84)) return false;
+            if(!engine.safeMove(Constants.PLAYER1,source,83)) return false;
+        }
+        return castling=true;
+    }
+
+    public boolean isPlayer2Castling(int destination){        
+        Piece king = position.player2_pieces[8];
+        Piece right_rook = position.player2_pieces[6];
+        Piece left_rook = position.player2_pieces[5];
+        
+        if(king.has_moved) return false;              
+        int source = move.from;
+        
+        if(right_rook == null && left_rook == null) return false;
+        if(right_rook != null && right_rook.has_moved && 
+                left_rook != null && left_rook.has_moved) return false;
+            
+        if(source != 15) return false;            
+        if(destination != 17 && destination != 13) return false;
+        if(destination == 17){
+            if(position.board[16] != Constants.EMPTY) return false;
+            if(position.board[17] != Constants.EMPTY) return false;
+            if(!engine.safeMove(Constants.PLAYER2,source,16)) return false;
+            if(!engine.safeMove(Constants.PLAYER2,source,17)) return false;
+        }
+        else if(destination == 13){
+            if(position.board[14] != Constants.EMPTY) return false;
+            if(position.board[13] != Constants.EMPTY) return false;
+            if(!engine.safeMove(Constants.PLAYER2,source,14)) return false;
+            if(!engine.safeMove(Constants.PLAYER2,source,13)) return false;
+        }
+        return castling=true;
     }
     
 }

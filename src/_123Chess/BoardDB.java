@@ -10,7 +10,7 @@ package _123Chess;
  */
 public class BoardDB {
     Move last_move;
-    public int[] board = new int[120];
+    public int[] board = new int[110];
     public Piece[] player1_pieces = new Piece[17];
     public Piece[] player2_pieces = new Piece[17];
     
@@ -36,32 +36,31 @@ public class BoardDB {
     }  
     
     public void reset(boolean player1White){         
-        player1_pieces[1] = new Piece(Piece.KNIGHT,92);
-        player1_pieces[2] = new Piece(Piece.KNIGHT,97);
-        player1_pieces[3] = new Piece(Piece.BISHOP,93);
-        player1_pieces[4] = new Piece(Piece.BISHOP,96);
-        player1_pieces[5] = new Piece(Piece.ROOK,91);
-        player1_pieces[6] = new Piece(Piece.ROOK,98);
-        player1_pieces[7] = new Piece(Piece.QUEEN,player1White?94:95);
-        player1_pieces[8] = new Piece(Piece.KING,player1White?95:94);
+        player1_pieces[1] = new Piece(Piece.KNIGHT,82);
+        player1_pieces[2] = new Piece(Piece.KNIGHT,87);
+        player1_pieces[3] = new Piece(Piece.BISHOP,83);
+        player1_pieces[4] = new Piece(Piece.BISHOP,86);
+        player1_pieces[5] = new Piece(Piece.ROOK,81);
+        player1_pieces[6] = new Piece(Piece.ROOK,88);
+        player1_pieces[7] = new Piece(Piece.QUEEN,player1White?84:85);
+        player1_pieces[8] = new Piece(Piece.KING,player1White?85:84);
         
-        player2_pieces[1] = new Piece(Piece.KNIGHT,22);
-        player2_pieces[2] = new Piece(Piece.KNIGHT,27);
-        player2_pieces[3] = new Piece(Piece.BISHOP,23);
-        player2_pieces[4] = new Piece(Piece.BISHOP,26);
-        player2_pieces[5] = new Piece(Piece.ROOK,21);
-        player2_pieces[6] = new Piece(Piece.ROOK,28);
-        player2_pieces[7] = new Piece(Piece.QUEEN,player1White?24:25);
-        player2_pieces[8] = new Piece(Piece.KING,player1White?25:24); 
+        player2_pieces[1] = new Piece(Piece.KNIGHT,12);
+        player2_pieces[2] = new Piece(Piece.KNIGHT,17);
+        player2_pieces[3] = new Piece(Piece.BISHOP,13);
+        player2_pieces[4] = new Piece(Piece.BISHOP,16);
+        player2_pieces[5] = new Piece(Piece.ROOK,11);
+        player2_pieces[6] = new Piece(Piece.ROOK,18);
+        player2_pieces[7] = new Piece(Piece.QUEEN,player1White?14:15);
+        player2_pieces[8] = new Piece(Piece.KING,player1White?15:14); 
         
-        int j = 81;
+        int j = 71;
         for(int i=9; i<player1_pieces.length; i++){
             player1_pieces[i] = new Piece(Piece.PAWN,j);
             player2_pieces[i] = new Piece(Piece.PAWN,j-50);
             j++;
         }                      
         board = new int[]{
-            Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,
             Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,
             Constants.ILLEGAL,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.ILLEGAL,
             Constants.ILLEGAL,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.EMPTY,Constants.ILLEGAL,
@@ -74,6 +73,7 @@ public class BoardDB {
             Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,
             Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL
         };        
+//        Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,Constants.ILLEGAL,
         for(int i=0; i<board.length; i++){                        
             for(int k=1; k<player1_pieces.length; k++){
                 if(i==player1_pieces[k].location){
