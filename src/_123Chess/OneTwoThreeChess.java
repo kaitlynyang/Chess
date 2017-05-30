@@ -46,7 +46,7 @@ import _123Chess.Constants;
  * @author kaitlyn.yang
  *
  */
-public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListener {
+public class OneTwoThreeChess extends javax.swing.JFrame {
 
 	 	BoardDB position;        
 	    BoardPane boardPane;  
@@ -121,7 +121,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	        
 	        pack();
 	        Dimension size = getSize();
-	        size.height = 543;
+	        size.height = 505;
 	        setSize(size);
 	        
 	        this.newGame();
@@ -171,7 +171,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 		
 		public void quit(){
 	        int option = JOptionPane.showConfirmDialog(null,"Are you sure you want to quit?", 
-	                    "MyChessmate1.1", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+	                    "123 Chess", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 	        if(option == JOptionPane.YES_OPTION)
 	            System.exit(0);
 	        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -187,38 +187,9 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
 	        }        
 	    }
 	
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-	
     public class BoardPane extends JPanel implements MouseListener{     
-        Image animatingImage;
+        Image movingImage;
         int movingX,movingY,desX,desY,deltaX,deltaY;
         public BoardPane(){
             setPreferredSize(new Dimension(450, 495));
@@ -259,7 +230,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
                 }
             } 
             if(state == Constants.MOVING){
-                g.drawImage(animatingImage, movingX, movingY, this);
+                g.drawImage(movingImage, this.movingX, this.movingY, this);
             }
         }
 
@@ -379,7 +350,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame implements MouseListene
         }else {
             animating_image_key = -position.player2_pieces[-position.board[move.from]].value;
         }        
-        boardPane.animatingImage = images.get(animating_image_key);
+        boardPane.movingImage = images.get(animating_image_key);
         int x = move.from%10;        
         int y = (move.from-x)/10;
         boardPane.desX = move.to%10;
