@@ -16,15 +16,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -33,14 +30,12 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-//import JFrame;
 import _123Chess.Engine;
 import _123Chess.Constants;
 import _123Chess.Move;
 import _123Chess.Piece;
 import _123Chess.BoardDB;
 import _123Chess.Resource;
-import _123Chess.Constants;
 
 /**
  * @author kaitlyn.yang
@@ -88,7 +83,6 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
 	                            }
 	                        }
 	                    OneTwoThreeChess app = new OneTwoThreeChess();
-	                   // mcg.pack();
 	                    app.setLocationRelativeTo(null);
 	                    app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	                    app.setResizable(false);
@@ -105,17 +99,14 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
 	        super("123 Chess "+Constants.VERSION);                                  
 	        setContentPane(mainPane);                
 	        position = new BoardDB();
-	        //promotion_pane = new PromotionPane(this);
 	        JMenuBar menuBar = new JMenuBar();
 	        setJMenuBar(menuBar);
 	        menuBar.add(createGameMenu());
 	        
-	        //loadMenuIcons();
 	        loadBoardImages();
 	        
 	        boardPane = new BoardPane();  
 	        
-	        //main_pane.add(createMenuPane(),BorderLayout.WEST);
 	        mainPane.add(boardPane,BorderLayout.CENTER);  
 	        mainPane.setBackground(bgColor);      
 	        
@@ -127,7 +118,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
 	        this.newGame();
 	        addWindowListener(new WindowAdapter(){
 	            public void windowClosing(WindowEvent e){
-	                //quit();
+	                quit();
 	            }
 	        });
 	    } 
@@ -298,7 +289,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
 
     public void newGame()
     {
-      this.isWhite = true;//this.play_options.white_button.isSelected();
+      this.isWhite = true;
       this.move.from = -1;
       this.move.to = -1;
       this.position = new BoardDB();
@@ -382,12 +373,6 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
         if (boardPane.movingX == boardPane.desX * 45 && boardPane.movingY == boardPane.desY * 45) {                                           
             boardPane.repaint();            
             int source_square = position.board[move.from];            
-//            if(source_square>0){                
-//            }else {
-//                if(move.to > 90 && move.to<98 
-//                        && position.player2_pieces[-source_square].value == Piece.PAWN)
-//                    //promoteComputerPawn();
-//            }                        
             position.update(move); 
             if (!castling) togglePlayer();
             
@@ -398,7 +383,6 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
                 }
                 else if(move.to > 20 && move.to < 29 && 
                         position.p1Pieces[source_square].value == Piece.PAWN){
-                    //promoteHumanPawn();                    
                 }
             }
             
@@ -441,30 +425,30 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
     
     public boolean validPlayer1Move(int destination){        
         int source = move.from;
-        int destination_square = position.board[destination];
-        if(destination_square == Constants.ILLEGAL) return false;
+        int dSquare = position.board[destination];
+        if(dSquare == Constants.ILLEGAL) return false;
         if(!engine.safeMove(Constants.PLAYER1, source, destination)) return false;
         boolean valid = false;
-        int piece_value = position.p1Pieces[position.board[source]].value;                        
-        switch(piece_value){
+        int pValue = position.p1Pieces[position.board[source]].value;                        
+        switch(pValue){
             case Piece.PAWN:
-                if(destination == source-10 && destination_square == Constants.EMPTY) valid = true;
+                if(destination == source-10 && dSquare == Constants.EMPTY) valid = true;
                 if(destination == source-20 && position.board[source-10] == Constants.EMPTY &&
-                        destination_square == Constants.EMPTY && source>70) valid = true;
-                if(destination == source-9 && destination_square<0) valid = true;
-                if(destination == source-11 && destination_square<0) valid = true;
+                        dSquare == Constants.EMPTY && source>70) valid = true;
+                if(destination == source-9 && dSquare<0) valid = true;
+                if(destination == source-11 && dSquare<0) valid = true;
                 break;
             case Piece.KNIGHT:
             case Piece.KING:
-            	if(piece_value == Piece.KING) valid = isPlayer1Castling(destination);
+            	if(pValue == Piece.KING) valid = isPlayer1Castling(destination);
                 int[] destinations = null;
-                if(piece_value == Piece.KNIGHT) destinations = new int[]{source-21,source+21,source+19,source-19,                    
+                if(pValue == Piece.KNIGHT) destinations = new int[]{source-21,source+21,source+19,source-19,                    
                     source-12,source+12,source-8,source+8};
                 else destinations = new int[]{source+1,source-1,source+10,source-10,
                     source+11,source-11,source+9,source-9};
                 for(int i=0; i<destinations.length; i++){
                     if(destinations[i] == destination){
-                        if(destination_square == Constants.EMPTY || destination_square<0){
+                        if(dSquare == Constants.EMPTY || dSquare<0){
                             valid = true;
                             break;
                         }
@@ -475,15 +459,15 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
             case Piece.ROOK:
             case Piece.QUEEN:
                 int[] deltas = null;
-                if(piece_value == Piece.BISHOP) deltas = new int[]{11,-11,9,-9};
-                if(piece_value == Piece.ROOK) deltas = new int[]{1,-1,10,-10};
-                if(piece_value == Piece.QUEEN) deltas = new int[]{1,-1,10,-10,11,-11,9,-9};
+                if(pValue == Piece.BISHOP) deltas = new int[]{11,-11,9,-9};
+                if(pValue == Piece.ROOK) deltas = new int[]{1,-1,10,-10};
+                if(pValue == Piece.QUEEN) deltas = new int[]{1,-1,10,-10,11,-11,9,-9};
                 for (int i = 0; i < deltas.length; i++) {
                     int des = source + deltas[i]; 
                     valid = true;
                     while (destination != des) { 
-                        destination_square = position.board[des];  
-                        if(destination_square != Constants.EMPTY){
+                        dSquare = position.board[des];  
+                        if(dSquare != Constants.EMPTY){
                             valid = false;
                             break;
                         }                        
@@ -498,30 +482,30 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
     
     public boolean validPlayer2Move(int destination){        
         int source = move.from;
-        int destination_square = position.board[destination];
-        if(destination_square == Constants.ILLEGAL) return false;
+        int dSquare = position.board[destination];
+        if(dSquare == Constants.ILLEGAL) return false;
         if(!engine.safeMove(Constants.PLAYER2, source, destination)) return false;
         boolean valid = false;
-        int piece_value = position.p2Pieces[-position.board[source]].value;                        
-        switch(piece_value){
+        int pValue = position.p2Pieces[-position.board[source]].value;                        
+        switch(pValue){
             case Piece.PAWN:
-                if(destination == source+10 && destination_square == Constants.EMPTY) valid = true;
+                if(destination == source+10 && dSquare == Constants.EMPTY) valid = true;
                 if(destination == source+20 && position.board[source+10] == Constants.EMPTY &&
-                        destination_square == Constants.EMPTY && source<30) valid = true;
-                if(destination == source+9 && destination_square>0) valid = true;
-                if(destination == source+11 && destination_square>0) valid = true;
+                        dSquare == Constants.EMPTY && source<30) valid = true;
+                if(destination == source+9 && dSquare>0) valid = true;
+                if(destination == source+11 && dSquare>0) valid = true;
                 break;
             case Piece.KNIGHT:
             case Piece.KING:
-                if(piece_value == Piece.KING) valid = isPlayer2Castling(destination);
+                if(pValue == Piece.KING) valid = isPlayer2Castling(destination);
                 int[] destinations = null;
-                if(piece_value == Piece.KNIGHT) destinations = new int[]{source-21,source+21,source+19,source-19,                    
+                if(pValue == Piece.KNIGHT) destinations = new int[]{source-21,source+21,source+19,source-19,                    
                     source-12,source+12,source-8,source+8};
                 else destinations = new int[]{source+1,source-1,source+10,source-10,
                     source+11,source-11,source+9,source-9};
                 for(int i=0; i<destinations.length; i++){
                     if(destinations[i] == destination){
-                        if(destination_square == Constants.EMPTY || destination_square>0){
+                        if(dSquare == Constants.EMPTY || dSquare>0){
                             valid = true;
                             break;
                         }
@@ -532,15 +516,15 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
             case Piece.ROOK:
             case Piece.QUEEN:
                 int[] deltas = null;
-                if(piece_value == Piece.BISHOP) deltas = new int[]{11,-11,9,-9};
-                if(piece_value == Piece.ROOK) deltas = new int[]{1,-1,10,-10};
-                if(piece_value == Piece.QUEEN) deltas = new int[]{1,-1,10,-10,11,-11,9,-9};
+                if(pValue == Piece.BISHOP) deltas = new int[]{11,-11,9,-9};
+                if(pValue == Piece.ROOK) deltas = new int[]{1,-1,10,-10};
+                if(pValue == Piece.QUEEN) deltas = new int[]{1,-1,10,-10,11,-11,9,-9};
                 for (int i = 0; i < deltas.length; i++) {
                     int des = source + deltas[i]; 
                     valid = true;
                     while (destination != des) { 
-                        destination_square = position.board[des];  
-                        if(destination_square != Constants.EMPTY){
+                        dSquare = position.board[des];  
+                        if(dSquare != Constants.EMPTY){
                             valid = false;
                             break;
                         }                        
@@ -555,15 +539,15 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
     
     public boolean isPlayer1Castling(int destination){        
         Piece king = position.p1Pieces[8];
-        Piece right_rook = position.p1Pieces[6];
-        Piece left_rook = position.p1Pieces[5];
+        Piece rightRook = position.p1Pieces[6];
+        Piece leftRook = position.p1Pieces[5];
         
         if(king.hasMoved) return false;              
         int source = move.from;
         
-        if(right_rook == null && left_rook == null) return false;
-        if(right_rook != null && right_rook.hasMoved && 
-                left_rook != null && left_rook.hasMoved) return false;
+        if(rightRook == null && leftRook == null) return false;
+        if(rightRook != null && rightRook.hasMoved && 
+                leftRook != null && leftRook.hasMoved) return false;
             
         if(source != 85) return false;            
         if(destination != 87 && destination != 83) return false;
@@ -584,15 +568,15 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
 
     public boolean isPlayer2Castling(int destination){        
         Piece king = position.p2Pieces[8];
-        Piece right_rook = position.p2Pieces[6];
-        Piece left_rook = position.p2Pieces[5];
+        Piece rightRook = position.p2Pieces[6];
+        Piece leftRook = position.p2Pieces[5];
         
         if(king.hasMoved) return false;              
         int source = move.from;
         
-        if(right_rook == null && left_rook == null) return false;
-        if(right_rook != null && right_rook.hasMoved && 
-                left_rook != null && left_rook.hasMoved) return false;
+        if(rightRook == null && leftRook == null) return false;
+        if(rightRook != null && rightRook.hasMoved && 
+                leftRook != null && leftRook.hasMoved) return false;
             
         if(source != 15) return false;            
         if(destination != 17 && destination != 13) return false;

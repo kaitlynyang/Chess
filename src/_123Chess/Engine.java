@@ -42,12 +42,12 @@ public class Engine {
         boolean checked = false;   
         int location = king.location;
         if(king == p1King){
-            int right_square = position.board[location-9];
-            int left_square = position.board[location-11];
-            if(right_square == Constants.ILLEGAL || left_square == Constants.ILLEGAL) return false;
-            if(right_square<0 && position.p2Pieces[-right_square].value == Piece.PAWN)
+            int rightSquare = position.board[location-9];
+            int leftSquare = position.board[location-11];
+            if(rightSquare == Constants.ILLEGAL || leftSquare == Constants.ILLEGAL) return false;
+            if(rightSquare<0 && position.p2Pieces[-rightSquare].value == Piece.PAWN)
                 checked = true;
-            if(left_square<0 && position.p2Pieces[-left_square].value == Piece.PAWN)
+            if(leftSquare<0 && position.p2Pieces[-leftSquare].value == Piece.PAWN)
                 checked = true;
         }else{
             int right_square = position.board[location+11];
@@ -72,16 +72,16 @@ public class Engine {
             location-12,location+12,location-8,location+8};
         for(int destination:destinations){
         	if (destination > 0 && destination < 99) {
-	            int des_square = position.board[destination];
-	            if(des_square != Constants.ILLEGAL) {
+	            int desSquare = position.board[destination];
+	            if(desSquare != Constants.ILLEGAL) {
 		            if(king == p1King){                
-		                if(des_square<0 && position.p2Pieces[-des_square].value == Piece.KNIGHT){
+		                if(desSquare<0 && position.p2Pieces[-desSquare].value == Piece.KNIGHT){
 		                    checked = true;
 		                    break;
 		                }
 		            }else{
-		                if(des_square>0 && des_square != Constants.EMPTY && 
-		                        position.p1Pieces[des_square].value == Piece.KNIGHT){
+		                if(desSquare>0 && desSquare != Constants.EMPTY && 
+		                        position.p1Pieces[desSquare].value == Piece.KNIGHT){
 		                    checked = true;
 		                    break;
 		                }
@@ -97,16 +97,16 @@ public class Engine {
         int[] destinations = {location+1,location-1,location+10,location-10,
             location+11,location-11,location+9,location-9};
         for(int destination:destinations){
-            int des_square = position.board[destination];
-            if(des_square == Constants.ILLEGAL) continue;
+            int desSquare = position.board[destination];
+            if(desSquare == Constants.ILLEGAL) continue;
             if(king == p1King){                
-                if(des_square<0 && position.p2Pieces[-des_square].value == Piece.KING){
+                if(desSquare<0 && position.p2Pieces[-desSquare].value == Piece.KING){
                     checked = true;
                     break;
                 }
             }else{
-                if(des_square>0 && des_square != Constants.EMPTY && 
-                        position.p1Pieces[des_square].value == Piece.KING){
+                if(desSquare>0 && desSquare != Constants.EMPTY && 
+                        position.p1Pieces[desSquare].value == Piece.KING){
                     checked = true;
                     break;
                 }
@@ -120,22 +120,22 @@ public class Engine {
         for(int i=0; i<deltas.length; i++){
             int delta = king.location+deltas[i];
             while(true){
-                int des_square = position.board[delta];
-                if(des_square == Constants.ILLEGAL) {
+                int desSquare = position.board[delta];
+                if(desSquare == Constants.ILLEGAL) {
                     checked = false;
                     break;
                 }
                 if(king == p1King){
-                    if(des_square<0 && position.p2Pieces[-des_square].value == Piece.BISHOP){
+                    if(desSquare<0 && position.p2Pieces[-desSquare].value == Piece.BISHOP){
                         checked = true;
                         break;
-                    }else if(des_square != Constants.EMPTY) break;
+                    }else if(desSquare != Constants.EMPTY) break;
                 }else if(king == p2King){
-                    if(des_square>0 && des_square != Constants.EMPTY && 
-                            position.p1Pieces[des_square].value == Piece.BISHOP){
+                    if(desSquare>0 && desSquare != Constants.EMPTY && 
+                            position.p1Pieces[desSquare].value == Piece.BISHOP){
                         checked = true;
                         break;
-                    }else if(des_square != Constants.EMPTY) break;
+                    }else if(desSquare != Constants.EMPTY) break;
                 }
                 delta += deltas[i];
             }
@@ -149,22 +149,22 @@ public class Engine {
         for(int i=0; i<deltas.length; i++){
             int delta = king.location+deltas[i];
             while(true){
-                int des_square = position.board[delta];
-                if(des_square == Constants.ILLEGAL) {
+                int desSquare = position.board[delta];
+                if(desSquare == Constants.ILLEGAL) {
                     checked = false;
                     break;
                 }
                 if(king == p1King){
-                    if(des_square<0 && position.p2Pieces[-des_square].value == Piece.ROOK){
+                    if(desSquare<0 && position.p2Pieces[-desSquare].value == Piece.ROOK){
                         checked = true;
                         break;
-                    }else if(des_square != Constants.EMPTY) break;
+                    }else if(desSquare != Constants.EMPTY) break;
                 }else if(king == p2King){
-                    if(des_square>0 && des_square != Constants.EMPTY && 
-                            position.p1Pieces[des_square].value == Piece.ROOK){
+                    if(desSquare>0 && desSquare != Constants.EMPTY && 
+                            position.p1Pieces[desSquare].value == Piece.ROOK){
                         checked = true;
                         break;
-                    }else if(des_square != Constants.EMPTY) break;
+                    }else if(desSquare != Constants.EMPTY) break;
                 }
                 delta += deltas[i];
             }
@@ -178,22 +178,22 @@ public class Engine {
         for(int i=0; i<deltas.length; i++){
             int delta = king.location+deltas[i];
             while(true){
-                int des_square = position.board[delta];
-                if(des_square == Constants.ILLEGAL) {
+                int desSquare = position.board[delta];
+                if(desSquare == Constants.ILLEGAL) {
                     checked = false;
                     break;
                 }
                 if(king == p1King){
-                    if(des_square<0 && position.p2Pieces[-des_square].value == Piece.QUEEN){
+                    if(desSquare<0 && position.p2Pieces[-desSquare].value == Piece.QUEEN){
                         checked = true;
                         break;
-                    }else if(des_square != Constants.EMPTY) break;
+                    }else if(desSquare != Constants.EMPTY) break;
                 }else if(king == p2King){
-                    if(des_square>0 && des_square != Constants.EMPTY && 
-                            position.p1Pieces[des_square].value == Piece.QUEEN){
+                    if(desSquare>0 && desSquare != Constants.EMPTY && 
+                            position.p1Pieces[desSquare].value == Piece.QUEEN){
                         checked = true;
                         break;
-                    }else if(des_square != Constants.EMPTY) break;
+                    }else if(desSquare != Constants.EMPTY) break;
                 }
                 delta += deltas[i];
             }
