@@ -10,12 +10,12 @@ package _123Chess;
  */
 public class Engine {          
     BoardDB position;
-    Piece player1_king;
-    Piece player2_king;
+    Piece p1King;
+    Piece p2King;
     
     public Engine(BoardDB position){
-        player1_king = position.player1_pieces[8];
-        player2_king = position.player2_pieces[8];
+        p1King = position.p1Pieces[8];
+        p2King = position.p2Pieces[8];
         this.position = position;
     }
     
@@ -27,7 +27,7 @@ public class Engine {
     }
     
     public boolean isChecked(int player){
-        Piece king = (player == Constants.PLAYER1)?player1_king:player2_king;
+        Piece king = (player == Constants.PLAYER1)?p1King:p2King;
         if(king == null) return false;
         if(checkedByPawn(king)) return true;
         if(checkedByKnight(king)) return true;
@@ -41,25 +41,25 @@ public class Engine {
     private boolean checkedByPawn(Piece king){
         boolean checked = false;   
         int location = king.location;
-        if(king == player1_king){
+        if(king == p1King){
             int right_square = position.board[location-9];
             int left_square = position.board[location-11];
             if(right_square == Constants.ILLEGAL || left_square == Constants.ILLEGAL) return false;
-            if(right_square<0 && position.player2_pieces[-right_square].value == Piece.PAWN)
+            if(right_square<0 && position.p2Pieces[-right_square].value == Piece.PAWN)
                 checked = true;
-            if(left_square<0 && position.player2_pieces[-left_square].value == Piece.PAWN)
+            if(left_square<0 && position.p2Pieces[-left_square].value == Piece.PAWN)
                 checked = true;
         }else{
             int right_square = position.board[location+11];
             int left_square = position.board[location+9];
             if(right_square != Constants.ILLEGAL){
                 if(right_square>0 && right_square != Constants.EMPTY && 
-                        position.player1_pieces[right_square].value == Piece.PAWN)
+                        position.p1Pieces[right_square].value == Piece.PAWN)
                     checked = true;
             }
             if(left_square != Constants.ILLEGAL){
                 if(left_square>0 && left_square != Constants.EMPTY && 
-                        position.player1_pieces[left_square].value == Piece.PAWN)
+                        position.p1Pieces[left_square].value == Piece.PAWN)
                     checked = true;
             }
         }
@@ -74,14 +74,14 @@ public class Engine {
         	if (destination > 0 && destination < 99) {
 	            int des_square = position.board[destination];
 	            if(des_square != Constants.ILLEGAL) {
-		            if(king == player1_king){                
-		                if(des_square<0 && position.player2_pieces[-des_square].value == Piece.KNIGHT){
+		            if(king == p1King){                
+		                if(des_square<0 && position.p2Pieces[-des_square].value == Piece.KNIGHT){
 		                    checked = true;
 		                    break;
 		                }
 		            }else{
 		                if(des_square>0 && des_square != Constants.EMPTY && 
-		                        position.player1_pieces[des_square].value == Piece.KNIGHT){
+		                        position.p1Pieces[des_square].value == Piece.KNIGHT){
 		                    checked = true;
 		                    break;
 		                }
@@ -99,14 +99,14 @@ public class Engine {
         for(int destination:destinations){
             int des_square = position.board[destination];
             if(des_square == Constants.ILLEGAL) continue;
-            if(king == player1_king){                
-                if(des_square<0 && position.player2_pieces[-des_square].value == Piece.KING){
+            if(king == p1King){                
+                if(des_square<0 && position.p2Pieces[-des_square].value == Piece.KING){
                     checked = true;
                     break;
                 }
             }else{
                 if(des_square>0 && des_square != Constants.EMPTY && 
-                        position.player1_pieces[des_square].value == Piece.KING){
+                        position.p1Pieces[des_square].value == Piece.KING){
                     checked = true;
                     break;
                 }
@@ -125,14 +125,14 @@ public class Engine {
                     checked = false;
                     break;
                 }
-                if(king == player1_king){
-                    if(des_square<0 && position.player2_pieces[-des_square].value == Piece.BISHOP){
+                if(king == p1King){
+                    if(des_square<0 && position.p2Pieces[-des_square].value == Piece.BISHOP){
                         checked = true;
                         break;
                     }else if(des_square != Constants.EMPTY) break;
-                }else if(king == player2_king){
+                }else if(king == p2King){
                     if(des_square>0 && des_square != Constants.EMPTY && 
-                            position.player1_pieces[des_square].value == Piece.BISHOP){
+                            position.p1Pieces[des_square].value == Piece.BISHOP){
                         checked = true;
                         break;
                     }else if(des_square != Constants.EMPTY) break;
@@ -154,14 +154,14 @@ public class Engine {
                     checked = false;
                     break;
                 }
-                if(king == player1_king){
-                    if(des_square<0 && position.player2_pieces[-des_square].value == Piece.ROOK){
+                if(king == p1King){
+                    if(des_square<0 && position.p2Pieces[-des_square].value == Piece.ROOK){
                         checked = true;
                         break;
                     }else if(des_square != Constants.EMPTY) break;
-                }else if(king == player2_king){
+                }else if(king == p2King){
                     if(des_square>0 && des_square != Constants.EMPTY && 
-                            position.player1_pieces[des_square].value == Piece.ROOK){
+                            position.p1Pieces[des_square].value == Piece.ROOK){
                         checked = true;
                         break;
                     }else if(des_square != Constants.EMPTY) break;
@@ -183,14 +183,14 @@ public class Engine {
                     checked = false;
                     break;
                 }
-                if(king == player1_king){
-                    if(des_square<0 && position.player2_pieces[-des_square].value == Piece.QUEEN){
+                if(king == p1King){
+                    if(des_square<0 && position.p2Pieces[-des_square].value == Piece.QUEEN){
                         checked = true;
                         break;
                     }else if(des_square != Constants.EMPTY) break;
-                }else if(king == player2_king){
+                }else if(king == p2King){
                     if(des_square>0 && des_square != Constants.EMPTY && 
-                            position.player1_pieces[des_square].value == Piece.QUEEN){
+                            position.p1Pieces[des_square].value == Piece.QUEEN){
                         checked = true;
                         break;
                     }else if(des_square != Constants.EMPTY) break;

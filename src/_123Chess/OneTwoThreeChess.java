@@ -179,7 +179,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
 		
 		public void loadBoardImages(){
 	        try{ 
-	            images.put(Constants.BOARD_IMAGE,ImageIO.read(new File(resource.getResourceString("chessboard"))));
+	            images.put(Constants.BOARDIMAGE,ImageIO.read(new File(resource.getResourceString("chessboard"))));
 	            images.put(Constants.SELECTED,ImageIO.read(new File(resource.getResourceString("Selected"))));
 	            images.put(Constants.MOVED,ImageIO.read(new File(resource.getResourceString("Moved"))));
 	        }catch(IOException ex){
@@ -200,7 +200,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
         public void paintComponent(Graphics g){
             if(position.board == null) return;
             super.paintComponent(g);  
-            Image scaledImage = images.get(Constants.BOARD_IMAGE).getScaledInstance(442,448,Image.SCALE_SMOOTH);
+            Image scaledImage = images.get(Constants.BOARDIMAGE).getScaledInstance(442,448,Image.SCALE_SMOOTH);
             g.drawImage(scaledImage,8,1,this);    
             
             for (int i = 0; i < position.board.length-11; i++) {
@@ -220,10 +220,10 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
 	
 	                if (position.board[i] != Constants.EMPTY) {
 		                if (position.board[i] > 0) {          
-		                    int piece = position.player1_pieces[position.board[i]].value;
+		                    int piece = position.p1Pieces[position.board[i]].value;
 		                    g.drawImage(images.get(piece), x*45, y*45, this);
 		                }else{
-		                    int piece = position.player2_pieces[-position.board[i]].value;
+		                    int piece = position.p2Pieces[-position.board[i]].value;
 		                    g.drawImage(images.get(-piece), x*45, y*45, this);
 		                }   
 	                }
@@ -253,7 +253,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
             		|| (activePlayer == Constants.PLAYER2 && validPlayer2Move(location)))) {
                 pieceSelected = false;
                 move.to = location;     
-                state = Constants.PREPARE_MOVE;
+                state = Constants.PREPAREMOVE;
             }
             else
             	return;
@@ -307,9 +307,9 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
       loadPieceImages();
       this.boardPane.repaint();
       if (this.isWhite) {
-        this.state = Constants.PLAYER1_MOVE;
+        this.state = Constants.P1MOVE;
       } else {
-        this.state = Constants.PLAYER2_MOVE;
+        this.state = Constants.P2MOVE;
       }
       this.castling = false;
       play();
@@ -320,17 +320,17 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
             public void run(){
                 while(true){           
                     switch(state){
-                        case Constants.PLAYER1_MOVE:    
+                        case Constants.P1MOVE:    
                             break;
-                        case Constants.PLAYER2_MOVE:             
+                        case Constants.P2MOVE:             
                             break;
-                        case Constants.PREPARE_MOVE:
+                        case Constants.PREPAREMOVE:
                             prepareMove();
                             break;
                         case Constants.MOVING:
                             moveOneStep();
                             break;                        
-                        case Constants.GAME_ENDED: return;
+                        case Constants.GAMEENDED: return;
                     }
                     try{                        
                         Thread.sleep(3);
@@ -346,9 +346,9 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
     public void prepareMove(){
         int animating_image_key = 0;
         if(position.board[move.from]>0){
-            animating_image_key = position.player1_pieces[position.board[move.from]].value;
+            animating_image_key = position.p1Pieces[position.board[move.from]].value;
         }else {
-            animating_image_key = -position.player2_pieces[-position.board[move.from]].value;
+            animating_image_key = -position.p2Pieces[-position.board[move.from]].value;
         }        
         boardPane.movingImage = images.get(animating_image_key);
         int x = move.from%10;        
@@ -394,10 +394,10 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
             if(source_square>0){
                 if(castling){   
                     prepareCastlingMove();
-                    state = Constants.PREPARE_MOVE;
+                    state = Constants.PREPAREMOVE;
                 }
                 else if(move.to > 20 && move.to < 29 && 
-                        position.player1_pieces[source_square].value == Piece.PAWN){
+                        position.p1Pieces[source_square].value == Piece.PAWN){
                     //promoteHumanPawn();                    
                 }
             }
@@ -430,11 +430,11 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
 
 	private void togglePlayer() {
 		if (activePlayer == Constants.PLAYER1) {
-			state = Constants.PLAYER2_MOVE;
+			state = Constants.P2MOVE;
 			activePlayer = Constants.PLAYER2;
 		}
 		else {
-			state = Constants.PLAYER1_MOVE;
+			state = Constants.P1MOVE;
 			activePlayer = Constants.PLAYER1;
 		}		
 	}
@@ -445,7 +445,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
         if(destination_square == Constants.ILLEGAL) return false;
         if(!engine.safeMove(Constants.PLAYER1, source, destination)) return false;
         boolean valid = false;
-        int piece_value = position.player1_pieces[position.board[source]].value;                        
+        int piece_value = position.p1Pieces[position.board[source]].value;                        
         switch(piece_value){
             case Piece.PAWN:
                 if(destination == source-10 && destination_square == Constants.EMPTY) valid = true;
@@ -502,7 +502,7 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
         if(destination_square == Constants.ILLEGAL) return false;
         if(!engine.safeMove(Constants.PLAYER2, source, destination)) return false;
         boolean valid = false;
-        int piece_value = position.player2_pieces[-position.board[source]].value;                        
+        int piece_value = position.p2Pieces[-position.board[source]].value;                        
         switch(piece_value){
             case Piece.PAWN:
                 if(destination == source+10 && destination_square == Constants.EMPTY) valid = true;
@@ -554,16 +554,16 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
     }
     
     public boolean isPlayer1Castling(int destination){        
-        Piece king = position.player1_pieces[8];
-        Piece right_rook = position.player1_pieces[6];
-        Piece left_rook = position.player1_pieces[5];
+        Piece king = position.p1Pieces[8];
+        Piece right_rook = position.p1Pieces[6];
+        Piece left_rook = position.p1Pieces[5];
         
-        if(king.has_moved) return false;              
+        if(king.hasMoved) return false;              
         int source = move.from;
         
         if(right_rook == null && left_rook == null) return false;
-        if(right_rook != null && right_rook.has_moved && 
-                left_rook != null && left_rook.has_moved) return false;
+        if(right_rook != null && right_rook.hasMoved && 
+                left_rook != null && left_rook.hasMoved) return false;
             
         if(source != 85) return false;            
         if(destination != 87 && destination != 83) return false;
@@ -583,16 +583,16 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
     }
 
     public boolean isPlayer2Castling(int destination){        
-        Piece king = position.player2_pieces[8];
-        Piece right_rook = position.player2_pieces[6];
-        Piece left_rook = position.player2_pieces[5];
+        Piece king = position.p2Pieces[8];
+        Piece right_rook = position.p2Pieces[6];
+        Piece left_rook = position.p2Pieces[5];
         
-        if(king.has_moved) return false;              
+        if(king.hasMoved) return false;              
         int source = move.from;
         
         if(right_rook == null && left_rook == null) return false;
-        if(right_rook != null && right_rook.has_moved && 
-                left_rook != null && left_rook.has_moved) return false;
+        if(right_rook != null && right_rook.hasMoved && 
+                left_rook != null && left_rook.hasMoved) return false;
             
         if(source != 15) return false;            
         if(destination != 17 && destination != 13) return false;

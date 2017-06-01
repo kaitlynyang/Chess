@@ -14,7 +14,7 @@ public class Piece {
     
     public int value;
     int location;
-    boolean has_moved;
+    boolean hasMoved;
     
     public Piece(int value,int location){
         this(value,location,false);
@@ -22,10 +22,10 @@ public class Piece {
     public Piece(int value,int location,boolean hasMoved){
         this.value = value;
         this.location = location;
-        this.has_moved = hasMoved;
+        this.hasMoved = hasMoved;
     }
     @Override
     public Piece clone(){
-        return new Piece(value,location,has_moved);
+        return new Piece(value,location,hasMoved);
     }
 }
