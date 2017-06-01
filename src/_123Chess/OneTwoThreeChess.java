@@ -64,24 +64,6 @@ public class OneTwoThreeChess extends javax.swing.JFrame {
 	            @Override
 	            public void run(){
 	                try{
-	                    boolean nimbusFound = false;
-	                        for(UIManager.LookAndFeelInfo info: UIManager.getInstalledLookAndFeels()){
-	                            if(info.getName().equals("Nimbus")){
-	                                UIManager.setLookAndFeel(info.getClassName());
-	                                nimbusFound = true;
-	                                break;
-	                            }
-	                        }
-	                        if(!nimbusFound){
-	                            int option = JOptionPane.showConfirmDialog(null,
-	                                    "Nimbus Look And Feel not found\n"+
-	                                    "Do you want to proceed?",
-	                                    "Warning",JOptionPane.YES_NO_OPTION,
-	                                    JOptionPane.WARNING_MESSAGE);
-	                            if(option == JOptionPane.NO_OPTION){
-	                                System.exit(0);
-	                            }
-	                        }
 	                    OneTwoThreeChess app = new OneTwoThreeChess();
 	                    app.setLocationRelativeTo(null);
 	                    app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
